@@ -20,7 +20,6 @@ if (!nav) {
 }
 nav.innerHTML = "";
 
-// Get the current filename. If it's empty (like at root), default to the first doc.
 const pathParts = window.location.pathname.split('/');
 const currentFile = pathParts.pop() || pathParts.pop(); 
 
@@ -30,9 +29,9 @@ docs.forEach(doc => {
     a.href = "./" + doc.file;
     a.textContent = doc.name;
     
-    // Normalize comparison: check if currentFile is exactly doc.file 
-    // or if we are at the root and this is the first doc.
-    if (currentFile === doc.file || (currentFile === "" && docs[0].file === doc.file)) {
+    // Treat index.html as equivalent to the first doc
+    const isIndex = currentFile === "index.html" && docs[0].file === doc.file;
+    if (currentFile === doc.file || isIndex || (currentFile === "" && docs[0].file === doc.file)) {
         a.classList.add("active");
     }
     nav.appendChild(a);

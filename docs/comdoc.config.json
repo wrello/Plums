@@ -10,7 +10,7 @@
         {
             "regex": "```(?:lua)?([\\s\\S]*?)```",
             "replace": "$1",
-            "style": "font-family: monospace; tab-size: 4; background: #f4f4f4; display: block; border-radius: 4px; font-weight: normal;"
+            "style": "font-family: monospace; tab-size: 4; background: #f4f4f4; display: block; border-radius: 4px; padding: 10px; margin: 10px 0;"
         }
     ]
 }
