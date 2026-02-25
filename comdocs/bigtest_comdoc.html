@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="comdoc-tab" content="RaycastHitbox">
+<meta name="comdoc-order" content="Infinity"> 
+<meta charset="UTF-8">
+<title>bigtest.lua</title>
+<style>
+body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #ffffff; }
+.comdoc-body { white-space: pre; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; padding: 20px; margin: 0; }
+.nav { background: #f5f5f5; padding: 12px 20px; border-bottom: 1px solid rgba(0,0,0,0.1); font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.tab { opacity: 0.7; margin-right: 20px; text-decoration: none; font-size: 16px; color: inherit; }
+.tab:hover { opacity: 1; }
+.tab.active { opacity: 1; font-weight: bold; text-decoration: underline; }
+</style>
+</head>
+<body>
+<script src="./comdoc_tabs.js"></script>
+<pre class="comdoc-body">____________________________________________________________________________________________________________________________________________________________________________
+
+	If you have any questions, feel free to message me on DevForum. Credits not neccessary but is appreciated.
+	
+	<span style="font-weight: bold;">[ How To Use - Quick Start Guide ]</span>
+	
+		1. Insert Attachments to places where you want your "hitbox" to be. For swords, I like to have attachments 1 stud apart and strung along the blade.
+		2. Name those Attachments "DmgPoint" (so the script knows). You can configure what name the script will look for in the variables below.
+		3. Open up a script. As an example, maybe we have a sword welded to the character or as a tool. Require this, and initialize:
+				
+				* Example Code
+					
+					local Damage = 10
+					local Hitbox = RaycastHitbox.new(Character)
+					
+					Hitbox.OnHit:Connect(function(hit, humanoid)
+						print(hit.Name)
+						humanoid:TakeDamage(Damage)
+					end)
+					
+					Hitbox:HitStart() --- Turns on the hitbox
+					wait(10) --- Waits 10 seconds
+					Hitbox:HitStop() --- Turns off the hitbox
+		
+		4. Profit. Refer to the API below for more information.
+				
+
+____________________________________________________________________________________________________________________________________________________________________________
+
+	<span style="font-weight: bold;">[ RaycastHitBox API ]</span>
+
+		* local RaycastHitbox = require(RaycastHitboxV4) ---Duh
+				--- To use, insert this at the top of your scripts or wherever.
+
+
+			<span style="font-weight: bold;">[ FUNCTIONS ]</span>
+
+		* RaycastHitbox.new(Instance model | BasePart | nil)
+				Description
+					--- Preps the model and recursively finds attachments in it so it knows where to shoot rays out of later. If a hitbox exists for this
+					--- object already, it simply returns the same hitbox.
+				Arguments
+					--- Instance:  (Like your character, a sword model, etc). Can be left nil in case you want an empty Hitbox or use SetPoints later
+				Returns
+					Instance HitboxObject
+						
+		* RaycastHitModule:GetHitbox(Instance model)
+				Description
+					--- Gets the HitboxObject if it exists.
+				Returns
+					--- HitboxObject if found, else nil
+					
+		
+		
+		* HitboxObject:SetPoints(Instance BasePart | Bone, table vectorPoints, string group)
+				Description
+					--- Merges existing Hitbox points with new Vector3 values relative to a part/bone position. This part can be a descendent of your original Hitbox model or
+						can be an entirely different instance that is not related to the hitbox (example: Have a weapon with attachments and you can then add in more vector3
+						points without instancing new attachments, great for dynamic hitboxes)
+				Arguments
+					--- Instance BasePart | Bone: Sets the part/bone that these vectorPoints will move in relation to the part's origin using Vector3ToWorldSpace
+					--- table vectorPoints: Table of vector3 values.
+					--- string group: optional group parameter
+					
+		* HitboxObject:RemovePoints(Instance BasePart | Bone, table vectorPoints)
+				Description
+					--- Remove given Vector3 values provided the part was the same as the ones you set in SetPoints
+				Arguments
+					--- Instance BasePart | Bone: Sets the part that these vectorPoints will be removed from in relation to the part's origin using Vector3ToWorldSpace
+					--- table vectorPoints: Table of vector3 values.
+		
+		* HitboxObject:LinkAttachments(Instance attachment1, Instance attachment2)
+				Description
+					--- Set two attachments to be in a link. The Raycast module will raycast between these two points.
+				Arguments
+					--- Instance attachment1/attachment2: Attachment objects
+					
+		* HitboxObject:UnlinkAttachments(Instance attachment1)
+				Description
+					--- Removes the link of an attachment. Only needs the primary attachment (argument 1 of LinkAttachments) to work. Will automatically sever the connection
+						to the second attachment.
+				Arguments
+					--- Instance attachment1: Attachment object
+				
+		* HitboxObject:HitStart(seconds)
+				Description
+					--- Starts drawing the rays. Will only damage the target once. Call HitStop to reset the target pool so you can damage the same targets again.
+						If HitStart hits a target(s), OnHit event will be called.
+				Arguments
+					--- number seconds: Optional numerical value, the hitbox will automatically turn off after this amount of time has elapsed
+					
+		* HitboxObject:HitStop()
+				Description
+					--- Stops drawing the rays and resets the target pool. Will do nothing if no rays are being drawn from the initialized model.
+
+		* HitboxObject.OnHit:Connect(returns: Instance part, returns: Instance humanoid, returns: RaycastResults, returns: String group)
+				Description
+					--- If HitStart hits a fresh new target, OnHit returns information about the hit target
+				Arguments
+					--- Instance part: Returns the part that the rays hit first
+					--- Instance humanoid: Returns the Humanoid object 
+					--- RaycastResults RaycastResults: Returns information about the last raycast results
+					--- String group: Returns information on the hitbox's group
+					
+		* HitboxObject.OnUpdate:Connect(returns: Vector3 position)
+				Description
+					--- This fires every frame, for every point, returning a Vector3 value of its last position in space. Do not use expensive operations in this function.
+		
+
+			<span style="font-weight: bold;">[ PROPERTIES ]</span>
+
+		* HitboxObject.RaycastParams: RaycastParams
+				Description
+					--- Takes in a RaycastParams object
+
+		* HitboxObject.Visualizer: boolean
+				Description
+					--- Turns on or off the debug rays for this hitbox
+
+		* HitboxObject.DebugLog: boolean
+				Description
+					--- Turns on or off output writing for this hitbox
+
+		* HitboxObject.DetectionMode: number <span style="font-weight: bold;">[1 - 3]</span>
+				Description
+					--- Defaults to 1. Refer to DetectionMode subsection below for more information
+
+			
+			<span style="font-weight: bold;">[ DETECTION MODES ]</span>
+
+		* RaycastHitbox.DetectionMode.Default
+				Description
+					--- Checks if a humanoid exists when this hitbox touches a part. The hitbox will not return humanoids it has already hit for the duration
+					--- the hitbox has been active.
+
+		* RaycastHitbox.DetectionMode.PartMode
+				Description
+					--- OnHit will return every hit part (in respect to the hitbox's RaycastParams), regardless if it's ascendant has a humanoid or not.
+					--- OnHit will no longer return a humanoid so you will have to check it. The hitbox will not return parts it has already hit for the
+					--- duration the hitbox has been active.
+
+		* RaycastHitbox.DetectionMode.Bypass
+				Description
+					--- PERFORMANCE MAY SUFFER IF THERE ARE A LOT OF PARTS. Use only if necessary.
+					--- Similar to PartMode, the hitbox will return every hit part. Except, it will keep returning parts even if it has already hit them.
+					--- Warning: If you have multiple raycast or attachment points, each raycast will also call OnHit. Allows you to create your own
+					--- filter system.
+		
+____________________________________________________________________________________________________________________________________________________________________________
+
+--</pre>
+</body>
+</html>
