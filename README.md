@@ -28,11 +28,10 @@ Plums' server-side needs to do much more work to account for nested plums and se
 
 Results with a small table:
 
-| Packet Type | Replica Size | Plum Size |
+| Packet Type | Replica Size | Plum Size (compressed) |
 | --- | --- | --- |
 | Instantiation | 88 bytes | 82 bytes |
 | Method | 63 bytes | 62 bytes |
-###### Note: Plum contains more data but is compressed using Squash
 
 <h2>Quick Start</h2>
 
