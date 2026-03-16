@@ -32,6 +32,7 @@ Results with a small table:
 | --- | --- | --- |
 | Instantiation | 88 bytes | 82 bytes |
 | Method | 63 bytes | 62 bytes |
+###### Note: Plum contains more data but is compressed using Squash
 
 <h2>Quick Start</h2>
 
