@@ -12,7 +12,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
 
 <h2>Comparing to Replica</h2>
-
+<h3>Speed</h3>
 The entirity of Replica's server-side compute time is taken up by the following path resolution algorithm:
 ```lua
 local pointer = self.Data
@@ -23,6 +23,7 @@ pointer[path[#path]] = value
 ```
 
 Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
+<h3>Packet Size</h3>
 
 <h2>Quick Start</h2>
 
