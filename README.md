@@ -69,9 +69,9 @@ Because of this extra processing, table modification methods can be up to ~10× 
 
 Results with a small table:
 
-| Replication Type | Replica Size | Plum Size (compressed) |
+| Packet Type | Replica Size | Plum Size (compressed) |
 | --- | --- | --- |
-| Instantiation | 88 bytes | 82 bytes |
-| Method | 63 bytes | 62 bytes |
+| Initial object send | 88 bytes | 82 bytes |
+| Method replication | 63 bytes | 62 bytes |
 
 
