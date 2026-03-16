@@ -51,7 +51,7 @@ end)
 loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
 <h3>Speed</h3>
 
-Replica’s work in table modification methods is resolving a single path:
+Replica resolves a single path in its table modification methods:
 ```lua
 local pointer = self.Data
 for i = 1, #path - 1 do
