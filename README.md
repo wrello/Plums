@@ -6,10 +6,25 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
 - Supports nested plums
-- Includes server side plum events
+- Includes server-side plum events
 - Propogates value changed events from sub-tables
 - Supports `Event:Observe()` to collect prior values
-- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead data
+- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+
+<h2>Comparing to Replica</h2>
+<h3>Speed</h3>
+
+The entirity of Replica's server-side compute time is taken up by the following path resolution algorithm:
+```lua
+local pointer = self.Data
+for i = 1, #path - 1 do
+  pointer = pointer[path[i]]
+end
+pointer[path[#path]] = value
+```
+
+Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
+<h3>Packet Size</h3>
 
 <h2>Quick Start</h2>
 
@@ -48,4 +63,4 @@ end)
 ```
 
 
-Inspired by loleris's [ReplicaService](https://github.com/MadStudioRoblox/ReplicaService).
+
