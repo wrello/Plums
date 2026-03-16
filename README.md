@@ -13,7 +13,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Quick Start</h2>
 
-Initialize client-side & server-side first:
+Initialize server & client first:
 ```lua
 -- Server
 local Plums = require(game.ReplicatedStorage.Plums.PlumsServer)
