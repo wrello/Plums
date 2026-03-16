@@ -36,7 +36,7 @@ local playerPlum = Plums.new("Player", {
   NestedPlum = nestedPlum
 }):AddAllClients():EnableAutoAddClient()
 
-playerPlum:SetValue({"Object", "NestedValue"}, 5)
+playerPlum:SetValue({"NestedPlum", "NestedValue"}, 5)
 ```
 
 Client:
