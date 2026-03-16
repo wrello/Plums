@@ -48,7 +48,7 @@ end)
 ```
 
 <h2>Comparing to Replica</h2>
-loleris's original ReplicaService (now Replica) was the inspiration for this library, here's some comparisons...
+loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
 <h3>Speed</h3>
 
 The entirity of Replica's server-side compute time is taken up by the following path resolution algorithm:
