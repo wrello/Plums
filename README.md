@@ -5,10 +5,29 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
-__Replicates table changes from server to client:__
+- Supports nested plums
+- Includes server side plum events
+- Propogates value changed events from sub-tables
+- Supports `Event:Observe()` to collect prior values
+- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead data
 
-Server:
+<h2>Quick Start</h2>
+
+Initialize server & client first:
 ```lua
+-- Server
+local Plums = require(game.ReplicatedStorage.Plums.PlumsServer)
+Plums:Init()
+```
+```lua
+-- Client
+local Plums = require(game.ReplicatedStorage.Plums.PlumsClient)
+Plums:Init()
+```
+
+Then create a plum:
+```lua
+-- Server
 local playerPlum = Plums.new("Player", {
   Coins = 0
 }):AddAllClients():EnableAutoAddClient()
@@ -16,8 +35,9 @@ local playerPlum = Plums.new("Player", {
 playerPlum:SetValue({"Coins"}, 5)
 ```
 
-Client:
+And listen to its changes:
 ```lua
+-- Client
 Plums.PlumReceived("Player"):Observe(function(playerPlum)
   print("Player plum received:", playerPlum.Data)
 
@@ -27,79 +47,5 @@ Plums.PlumReceived("Player"):Observe(function(playerPlum)
 end)
 ```
 
-__Supports nested plums:__
 
-Server:
-```lua
-local nestedPlum = Plums.new("Nested", {
-  NestedValue = 5
-})
-local playerPlum = Plums.new("Player", {
-  NestedPlum = nestedPlum
-}):AddAllClients():EnableAutoAddClient()
-
-playerPlum:SetValue({"NestedPlum", "NestedValue"}, 5)
-```
-
-Client:
-```lua
-Plums.PlumReceived("Player"):Observe(function(playerPlum)
-  print("Player plum received:", playerPlum.Data)
-
-  playerPlum.ValueChanged({"NestedPlum", "NestedValue"}):Observe(function(newVal, oldVal)
-    print("NestedValue:", newVal)
-  end)
-end)
-```
-
-__Includes server side events:__
-
-Server:
-```lua
-local plum = Plums.new("Plum")
-
-plum.ValueChanged({"TestValue"}):Connect(function(newVal, oldVal)
-  print("TestValue changed:", newVal)
-end)
-
-plum:SetValue({"TestValue"})
-```
-
-__Replicated client addition and removal:__
-
-Server:
-```lua
-local partyPlum = Plums.new("Party"):AddAllClients():EnableAutoAddClients()
-```
-
-Client:
-```lua
-Plum.PlumReceived("Party"):Observe(function(partyPlum)
-  print("Party plum received:", partyPlum.Data)
-
-  partyPlum.ClientAdded:Observe(function(client)
-    print("Client added:", client)
-  end)
-
-  partyPlum.ClientRemoved:Connect(function(client)
-    print("Client removed:", client)
-  end)
-end)
-```
-
-__Cascaded value changed events in sub-tables:__
-
-Server:
-```lua
-local plum = Plums.new("Plum", {
-  Items = {"ItemA", "ItemB", "ItemC"}
-})
-
-plum.ValueChanged({"Items", 1}):Connect(function(newVal, oldVal)
-  print("Items[1] changed:", newVal)
-end)
-
-plum:SetValue({"Items"}, nil)
-```
-
-Inspired by loleris's ReplicaService.
+Inspired by loleris's [ReplicaService](https://github.com/MadStudioRoblox/ReplicaService).
