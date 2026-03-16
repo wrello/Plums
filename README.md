@@ -10,6 +10,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Propagates value changed events from sub-tables
 - Supports `Event:Observe()` to collect prior values
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+- Base version has been battle tested in [Pro Junk Hauler](https://www.roblox.com/games/17618988439/Pro-Junk-Hauler)
 
 <h2>Quick Start</h2>
 
