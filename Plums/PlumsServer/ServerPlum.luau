@@ -28,6 +28,18 @@ comdoc "Server Plum" 4 LastUpdated
 			Will be true if 'plum:Destroy()' has been called.
 	
 	
+		.OnServerInvoke = function(player: Player, ...any?) -> ...any?
+		
+			Set this to a function in order to listen to 'clientPlum:InvokeServer()' calls.
+		
+			```lua
+			playerPlum.OnServerInvoke = function(player, ...)
+				print("On server invoke! Player:", player, "Args:", ...)
+				return "response from server"
+			end)
+			```	
+
+	
 	[ Methods ]
 	
 		:SetValue(path : {string | number}, newValue : any?) -> any?
@@ -134,17 +146,6 @@ comdoc "Server Plum" 4 LastUpdated
 	
 	
 	[ Events ]
-		
-		.OnServerInvoke = function(player: Player, ...any?) -> ...any?
-		
-			Set this to a function in order to listen to 'clientPlum:InvokeServer()' calls.
-		
-			```lua
-			playerPlum.OnServerInvoke = function(player, ...)
-				print("On server invoke! Player:", player, "Args:", ...)
-				return "response from server"
-			end)
-			```
 		
 		
 		.ValueChanged(path : {string | number})
