@@ -6,10 +6,14 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
 - Supports nested plums
-- Includes server side plum events
+- Includes server-side plum events
 - Propogates value changed events from sub-tables
 - Supports `Event:Observe()` to collect prior values
-- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead data
+- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+
+<h2>Speed</h2>
+
+Plum table modification methods are 4× slower than loleris's Replica without nested plums or events, and up to 10×+ slower when a plum needs to traverse nested plums and server-side event listeners.
 
 <h2>Quick Start</h2>
 
@@ -48,4 +52,4 @@ end)
 ```
 
 
-Inspired by loleris's [ReplicaService](https://github.com/MadStudioRoblox/ReplicaService).
+
