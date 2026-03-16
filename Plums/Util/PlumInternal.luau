@@ -39,7 +39,7 @@ end
 function PlumInternal:_setValueInternal(pathArray, newValue)
 	-- Get old value and hit sub-plums in the path
 	local subPaths, targetTable, oldValue = PathUtil.getSubPaths(self, pathArray)
-	
+
 	local eventQueue = {}
 
 	local isQueued = {}
@@ -71,7 +71,7 @@ function PlumInternal:_setValueInternal(pathArray, newValue)
 		queueEvents(plum, pathString, pathArray)
 
 		-- Bubble events upward (breadth first)
-		if #plum._bubbleTo > 0 then
+		if next(self._bubbleTo) then
 			local queue = {{plum, pathString}}
 			local head = 1
 			while head <= #queue do
@@ -89,7 +89,7 @@ function PlumInternal:_setValueInternal(pathArray, newValue)
 	end
 
 	-- Set the 'newValue' once for all sub-plums
-	targetTable[#pathArray] = newValue
+	targetTable[pathArray[#pathArray]] = newValue
 
 	-- Fire events
 	for _, v in eventQueue do
@@ -105,7 +105,7 @@ function PlumInternal:_arrayInsertInternal(pathArray, newValue, index)
 
 	-- Get old value and hit sub-plums in the path
 	local subPaths, targetTable = PathUtil.getSubPaths(self, pathArray)
-	targetTable = targetTable[#pathArray]
+	targetTable = targetTable[pathArray[#pathArray]]
 
 	local eventQueue = {}
 
@@ -120,7 +120,7 @@ function PlumInternal:_arrayInsertInternal(pathArray, newValue, index)
 		if not plumQueued[pathString] then
 			plumQueued[pathString] = true
 
-			pathArray = pathArray or PathUtil.toString(pathArray)
+			pathArray = pathArray or PathUtil.toArray(pathString)
 			table.insert(pathArray, index)
 
 			-- Fire all signals post-set
@@ -142,7 +142,7 @@ function PlumInternal:_arrayInsertInternal(pathArray, newValue, index)
 		queueEvents(plum, pathString, pathArray)
 
 		-- Bubble events upward
-		if #plum._bubbleTo > 0 then
+		if next(self._bubbleTo) then
 			local queue = {{plum, pathString}}
 			local head = 1
 			while head <= #queue do
@@ -177,7 +177,7 @@ end
 
 function PlumInternal:_arrayRemoveInternal(pathArray, index)
 	local subPaths, targetTable, oldValue = PathUtil.getSubPaths(self, pathArray)
-	targetTable = targetTable[#pathArray]
+	targetTable = targetTable[pathArray[#pathArray]]
 	oldValue = oldValue[index]
 
 	local eventQueue = {}
@@ -193,7 +193,7 @@ function PlumInternal:_arrayRemoveInternal(pathArray, index)
 		if not plumQueued[pathString] then
 			plumQueued[pathString] = true
 
-			pathArray = pathArray or PathUtil.toString(pathArray)
+			pathArray = pathArray or PathUtil.toArray(pathString)
 			table.insert(pathArray, index)
 
 			-- Fire all signals post-set
@@ -215,7 +215,7 @@ function PlumInternal:_arrayRemoveInternal(pathArray, index)
 		queueEvents(plum, pathString, pathArray)
 
 		-- Bubble events upward
-		if #plum._bubbleTo > 0 then
+		if next(self._bubbleTo) then
 			local queue = {{plum, pathString}}
 			local head = 1
 			while head <= #queue do

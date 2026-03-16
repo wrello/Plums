@@ -60,35 +60,35 @@ type PlumSharedType = {
 	Destroyed: EventConnecterType<() -> ()>,
 }
 export type PlumServerType = {
+	-- Properties
+	OnServerInvoke: ((client: Player, ...any?) -> ...any?)?,
+	
 	-- Methods
-	SetValue: (self: PlumServerType, path: PathArrayType, newValue: any?) -> any,
-	IncValue: (self: PlumServerType, path: PathArrayType, increment: number?) -> number?,
-	DecValue: (self: PlumServerType, path: PathArrayType, decrement: number?) -> number?,
-	MultiplyValue: (self: PlumServerType, path: PathArrayType, multiplier: number?) -> number?,
+	SetValue: (self: PlumServerType, path: PathArrayType, newValue: any?) -> any?,
+	IncValue: (self: PlumServerType, path: PathArrayType, increment: number?) -> number,
+	DecValue: (self: PlumServerType, path: PathArrayType, decrement: number?) -> number,
+	MultiplyValue: (self: PlumServerType, path: PathArrayType, multiplier: number) -> number,
 	ArrayInsert: (self: PlumServerType, path: PathArrayType, newValue: any, index: number?) -> (),
-	ArrayRemove: (self: PlumServerType, path: PathArrayType, index: number?) -> (),
-	SetValueServerOnly: (self: PlumServerType, path: PathArrayType, newValue: any?) -> any,
-	IncValueServerOnly: (self: PlumServerType, path: PathArrayType, increment: number?) -> number?,
-	DecValueServerOnly: (self: PlumServerType, path: PathArrayType, decrement: number?) -> number?,
-	MultiplyValueServerOnly: (self: PlumServerType, path: PathArrayType, multiplier: number?) -> number?,
+	ArrayRemove: (self: PlumServerType, path: PathArrayType, index: number?) -> any?,
+	SetValueServerOnly: (self: PlumServerType, path: PathArrayType, newValue: any?) -> any?,
+	IncValueServerOnly: (self: PlumServerType, path: PathArrayType, increment: number?) -> number,
+	DecValueServerOnly: (self: PlumServerType, path: PathArrayType, decrement: number?) -> number,
+	MultiplyValueServerOnly: (self: PlumServerType, path: PathArrayType, multiplier: number?) -> number,
 	ArrayInsertServerOnly: (self: PlumServerType, path: PathArrayType, newValue: any, index: number?) -> (),
-	ArrayRemoveServerOnly: (self: PlumServerType, path: PathArrayType, index: number?) -> (),
+	ArrayRemoveServerOnly: (self: PlumServerType, path: PathArrayType, index: number) -> any,
 	AddClients: (self: PlumServerType, clients: Player | {Player}) -> PlumServerType,
 	AddAllClients: (self: PlumServerType) -> PlumServerType,
 	RemoveClients: (self: PlumServerType, clients: Player | {Player}) -> (),
-	EnableAutoAddClients: (self: PlumServerType) -> PlumServerType,
-	DisableAutoAddClients: (self: PlumServerType) -> (),
+	EnableAutoAddClient: (self: PlumServerType) -> PlumServerType,
+	DisableAutoAddClient: (self: PlumServerType) -> (),
 	Destroy: (self: PlumServerType) -> (),
 	BindToInstance: (self: PlumServerType, instance: Instance) -> PlumServerType,
-	Broadcast: (self: PlumServerType) -> (),
-	BroadcastTo: (self: PlumServerType, clients: {Player} | Player) -> (),
-	
-	-- Events
-	OnServerInvoke: ((client: Player, ...any) -> ...any)?,
+	Broadcast: (self: PlumServerType, ...any?) -> (),
+	BroadcastTo: (self: PlumServerType, clients: {Player} | Player, ...any?) -> (),
 } & PlumSharedType
 export type PlumClientType = {
 	-- Methods
-	InvokeServer: (self: PlumClientType, ...any) -> any,	
+	InvokeServer: (self: PlumClientType, ...any?) -> any,	
 	
 	-- Events
 	LocalClientAdded: EventConnecterType<() -> ()>,

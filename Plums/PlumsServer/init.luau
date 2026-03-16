@@ -26,7 +26,7 @@ comdoc "Plums Server" 2 LastUpdated
 			Yields until the library has been initialized (waits for an ':Init()' call).
 			
 		
-		:WaitForPlum(plumId : number, debugTag : string?) -> Plum?
+		:WaitForPlum(plumId : number, debugTag : string?) -> Plum
 		
 			Yields until the specified plum exists on the server. Provide a 'debugTag' for helpful debug prints if this plum is not being found.
 		
@@ -50,46 +50,6 @@ comdoc "Plums Server" 2 LastUpdated
 			end)
 			```
 
-]]
-
---[[
-(notes for package dev)
-
-	Sub-plums are added when found...
-	
-		...in the 'data' table passed into 'Plums.new()'
-		...as the 'newValue' or inside of the 'newValue' table through ':SetValue()'/':ArrayInsert()'
-	
-	Note: Not going to account for sub-plums added with assignment (Plums.Data = {sub-plum}) because it increases complexity/overhead for each replicated method call.
-	If the dev wants server + client events for sub-plums, they must add them through cases a. or b.
-
-	On sub-plum added:
-	
-		Server-side:
-			
-			Call sub-plum:AddClients(self.Clients)
-		
-		Server & client:
-		
-			Call sub-plum:_bubbleEventsTo(self)
-		
-		
-	Sub-plums are removed when found...
-	
-		...as the 'oldValue' or in the 'oldValue' table through ':SetValue()'/':ArrayRemove()'
-			(find all sub-plums in 'oldValue' and check to see if they are in the 'newValue'. if not, remove them as sub-plums)
-
-	On sub-plum removed:
-		
-		Server & client:
-
-			Call sub-plum:_stopBubbleEventsTo(self)
-			
-			
-	Also stop bubbling up events...
-	
-		...when our plum is destroyed -> stop bubbling all 1st level sub-plum events to it
-	
 ]]
 
 local Signal = require(script.Parent.Util.Signal)

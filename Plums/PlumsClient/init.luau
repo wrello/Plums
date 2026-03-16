@@ -13,7 +13,7 @@ comdoc "Plums Client" 1 LastUpdated
 			Yields until the library has been initialized (waits for an ':Init()' call).
 			
 		
-		:WaitForPlum(plumId : number, debugTag : string?) -> Plum?
+		:WaitForPlum(plumId : number, debugTag : string?) -> Plum
 		
 			Yields until the specified plum exists on the client. Provide a 'debugTag' for helpful debug prints if this plum is not being found.
 		

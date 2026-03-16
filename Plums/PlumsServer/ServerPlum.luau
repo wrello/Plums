@@ -50,21 +50,21 @@ comdoc "Server Plum" 4 LastUpdated
 	
 			Number-based ':SetValue()' wrappers:
 	
-				:IncValue(path : {string | number}, increment : number?) -> any?
+				:IncValue(path : {string | number}, increment : number?) -> number
 				
-					Increments the old value at 'path' by 1 and returns the old value.
+					Increments the old value at 'path' by 'increment' (1 by default) and returns the old value.
 					
 					':IncValueServerOnly()' doesn't replicate to clients.
 				
 				
-				:DecValue(path : {string | number}, decrement : number?) -> any?
+				:DecValue(path : {string | number}, decrement : number?) -> number
 				
-					Decrements the old value at 'path' by 1 and returns the old value.
+					Decrements the old value at 'path' by 'increment' (1 by default) and returns the old value.
 					
 					':DecValueServerOnly()' doesn't replicate to clients.
 				
 				
-				:MultiplyValue(path : {string | number}, multiplier : number?) -> any?
+				:MultiplyValue(path : {string | number}, multiplier : number) -> number
 			
 					Multiplies the old value at 'path' by 'multiplier' and returns the old value.
 					
@@ -134,11 +134,6 @@ comdoc "Server Plum" 4 LastUpdated
 		
 			Destroys the plum when 'instance' is destroyed.
 	
-		
-		:WaitFor(path : {string | number}) -> any?
-		
-			Yields until the value at 'path' is not nil and returns the value.
-			
 	
 		:Destroy()
 		
@@ -221,6 +216,44 @@ comdoc "Server Plum" 4 LastUpdated
 			:Connect() -- Listens for when the server calls ':Destroy()'
 			
 			
+]]
+
+--[[
+	Sub-plums are added when found...
+	
+		...in the 'data' table passed into 'Plums.new()'
+		...as the 'newValue' or inside of the 'newValue' table through ':SetValue()'/':ArrayInsert()'
+	
+	Note: Not going to account for sub-plums added with assignment (Plums.Data = {sub-plum}) because it increases complexity/overhead for each replicated method call.
+	If the dev wants server + client events for sub-plums, they must add them through cases a. or b.
+
+	On sub-plum added:
+	
+		Server-side:
+			
+			Call sub-plum:AddClients(self.Clients)
+		
+		Server & client:
+		
+			Call sub-plum:_bubbleEventsTo(self)
+		
+		
+	Sub-plums are removed when found...
+	
+		...as the 'oldValue' or in the 'oldValue' table through ':SetValue()'/':ArrayRemove()'
+			(find all sub-plums in 'oldValue' and check to see if they are in the 'newValue'. if not, remove them as sub-plums)
+
+	On sub-plum removed:
+		
+		Server & client:
+
+			Call sub-plum:_stopBubbleEventsTo(self)
+			
+			
+	Also stop bubbling up events...
+	
+		...when our plum is destroyed -> stop bubbling all 1st level sub-plum events to it
+	
 ]]
 
 local RunService = game:GetService("RunService")
@@ -713,7 +746,7 @@ function ServerPlum:IncValue(pathArray, increment)
 end
 
 function ServerPlum:DecValue(pathArray, decrement)
-	return self:IncValue(pathArray, -1)
+	return self:IncValue(pathArray, -(decrement or 1))
 end
 
 function ServerPlum:MultiplyValue(pathArray, multiplier)
