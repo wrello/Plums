@@ -146,12 +146,11 @@ local Signal = require(script.Parent.Parent.Util.Signal)
 local Squash = require(script.Parent.Parent.Util.Squash)
 local t = require(script.Parent.Parent.Util.t)
 local Maid = require(game.ReplicatedStorage.Util.Maid)
-local PlumBase = require(script.Parent.Parent.Util.PlumBase)
-local IsPlum = require(script.Parent.Parent.Util.IsPlum)
+local PlumInternal = require(script.Parent.Parent.Util.PlumInternal)
 
 local invokeFromClientRF = script.Parent.Parent.InvokeFromClientRF
 
-local ClientPlum = PlumBase
+local ClientPlum = PlumInternal
 
 -------------
 -- Private --
@@ -180,6 +179,7 @@ function ClientPlum.new(plumId, plumClassName, plumData, plumClients)
 	self.ClientRemoved = maid:Add(Signal.new())
 	self.Destroyed = maid:Add(Signal.new())
 
+	self._isPlum = true
 	self._bubbleTo = {}
 	self._path_to_signal = { ["ValueChanged"] = {}, ["OnArrayInsert"] = {}, ["OnArrayRemove"] = {} }
 	self._valueChangedSignalTrie = {}

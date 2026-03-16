@@ -1,13 +1,10 @@
 local PathUtil = require(script.Parent.PathUtil)
-local IsPlum = require(script.Parent.IsPlum)
 
 local PlumValueChangedUtil = {}
 
-local function collectEvents(t, path, data, out, newValue)
+local function collectEvents(t, path, out, newValue, oldValue)
 	local signal = t._signal
 	if signal then
-		local oldValue = PathUtil.get(data, path)
-
 		if newValue ~= oldValue then
 			table.insert(out, {signal, newValue, oldValue})
 		end
@@ -20,11 +17,77 @@ local function collectEvents(t, path, data, out, newValue)
 		
 		table.insert(path, k)
 
-		collectEvents(v, path, data, out,
-			if IsPlum(newValue) then
-				newValue.Data
-			elseif type(newValue) == "table" then
-				newValue[k]
+		--[[
+		
+			-- Old
+			Data = {T = {A = {B = {}}}}
+			
+			-- Listening
+			.ValueChanged({"T", "A", "B"})
+		
+			-- New
+			:Set({"T", "A"}, nil)
+
+
+			[ Recursion Diagram ]
+			
+			newValue : New[depth + 1]
+			oldValue : Old[depth + 1]
+			
+			Depth 0
+
+			newValue = T
+			oldValue = T
+
+			Listening		New			Old
+			
+				T <-		 T			 T
+				|			 |			 |
+				A			 A = nil	 A
+				|			 			 |
+				B			 			 B
+		
+			Depth 1
+
+			newValue = nil
+			oldValue = A
+		
+			Listening		New			Old
+			
+				T   		 T			 T
+				|			 |			 |
+				A <-		 A = nil	 A
+				|			 			 |
+				B			 			 B
+				
+			Depth 2
+
+			newValue = nil
+			oldValue = B
+		
+			Listening		New			Old
+			
+				T   		 T			 T
+				|			 |			 |
+				A 			 A = nil	 A
+				|			 			 |
+				B <-			 		 B
+		
+		]]
+
+		collectEvents(v, path, out,
+			if type(newValue) == "table" then
+				if newValue._isPlum then
+					newValue.Data[k]
+				else
+					newValue[k]
+			else
+				nil,
+			if type(oldValue) == "table" then
+				if oldValue._isPlum then
+					oldValue.Data[k]
+				else
+					oldValue[k]
 			else
 				nil
 		)
@@ -34,17 +97,22 @@ local function collectEvents(t, path, data, out, newValue)
 end
 
 -- Returns all the value changed signals that are triggered by setting 'plum[pathArray] = newValue' recursively
-function PlumValueChangedUtil.getTriggeredValueChangedEvents(plum, changingPathArray, newValue)
+function PlumValueChangedUtil.getTriggeredValueChangedEvents(plum, pathArray, newValue)
 	local listening = plum._valueChangedSignalTrie
-	for _, v in changingPathArray do
+	local oldValue = plum.Data
+	for _, v in pathArray do
 		listening = listening[v]
 		if not listening then -- Changing path goes deeper than listening path
 			return {}
 		end
+		oldValue = oldValue[v]
+		if type(oldValue) == "table" and oldValue._isPlum then
+			oldValue = oldValue.Data
+		end
 	end
 	
 	local events = {}
-	collectEvents(listening, changingPathArray, plum.Data, events, newValue)
+	collectEvents(listening, pathArray, events, newValue, oldValue)
 	return events
 end
 

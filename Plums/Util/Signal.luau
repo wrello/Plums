@@ -88,20 +88,29 @@ end
 
 function Signal:Fire(...)
 	-- Clone beforehand so things modifying them mid-loop don't cause side-effects
-	local clonedWaitingThreads = table.clone(self._waitingThreads)
-	local clonedConnections = table.clone(self._connections)
-	
-	table.clear(self._waitingThreads)
-	
-	for _, v in clonedWaitingThreads do
-		task.spawn(v, ...)
+	local clonedWaitingThreads
+	if #self._waitingThreads > 0 then
+		clonedWaitingThreads = table.clone(self._waitingThreads)
+		table.clear(self._waitingThreads)
+	end
+	local clonedConnections
+	if #self._connections > 0 then
+		clonedConnections = table.clone(self._connections)
 	end
 	
-	for _, v in clonedConnections do
-		if v._isOnce then
-			v:Disconnect()
+	if clonedWaitingThreads then
+		for _, v in clonedWaitingThreads do
+			task.spawn(v, ...)
 		end
-		task.spawn(v.Handler, ...)
+	end
+
+	if clonedConnections then
+		for _, v in clonedConnections do
+			if v._isOnce then
+				v:Disconnect()
+			end
+			task.spawn(v.Handler, ...)
+		end
 	end
 end
 

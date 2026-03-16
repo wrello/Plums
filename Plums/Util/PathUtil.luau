@@ -1,5 +1,3 @@
-local IsPlum = require(script.Parent.IsPlum)
-
 local PathUtil = {}
 
 function PathUtil.getPathsTo(parent, needle, results, currentPath, visited)
@@ -18,7 +16,7 @@ function PathUtil.getPathsTo(parent, needle, results, currentPath, visited)
 			table.insert(results, newPath)
 		end
 
-		if type(v) == "table" and not IsPlum(v) then
+		if type(v) == "table" and not v._isPlum then
 			PathUtil.getPathsTo(v, needle, results, newPath, visited)
 		end
 	end
@@ -26,53 +24,41 @@ function PathUtil.getPathsTo(parent, needle, results, currentPath, visited)
 	return results
 end
 
-function PathUtil.doesContain(t, needle, visited)
-	visited = visited or {}
-
-	if visited[t] then
-		return false
-	end
-	visited[t] = true
-
-	for _, v in t do
-		local doesContain = v == needle
-			or IsPlum(v) and PathUtil.doesContain(v.Data, needle, visited)
-			or type(v) == "table" and PathUtil.doesContain(v, needle, visited)
-
-		if doesContain then
-			return true
-		end
-	end
-
-	return false
-end
-
 function PathUtil.getSubPaths(plum, pathArray)
-	local t = plum.Data
-	local subPaths = {{plum, 1}}
-
-	for i = 1, #pathArray do
-		t = t[pathArray[i]]
-		if IsPlum(t) then
-			if i < #pathArray then
-				table.insert(subPaths, {t, i+1})
-			end
-			t = t.Data
+	local oldValue = plum.Data
+	local newValueParent = oldValue
+	local subPaths = {{plum, nil, pathArray}}
+	
+	local n = #pathArray
+	for i = 1, n do
+		newValueParent = oldValue
+		oldValue = oldValue[pathArray[i]]
+		if i < n and oldValue._isPlum then
+			table.insert(subPaths, {oldValue, i+1})
+			oldValue = oldValue.Data
 		end
 	end
 
-	local n = #pathArray
 	for _, v in subPaths do
-		v[2] = table.concat(pathArray, ".", v[2], n)
+		if not v[3] then
+			local start = v[2]
+			local sub = table.create(n - start + 1)
+			for i = start, n do
+				sub[i - start + 1] = pathArray[i]
+			end
+			v[3] = sub
+		end
+		
+		v[2] = table.concat(v[3], '.')
 	end
 
-	return subPaths
+	return subPaths, newValueParent, oldValue
 end
 
 function PathUtil.set(t, pathArray, newValue)
 	for i = 1, #pathArray-1 do
 		t = t[pathArray[i]]
-		if IsPlum(t) then
+		if t._isPlum then
 			t = t.Data
 		end
 	end
@@ -94,8 +80,10 @@ end
 function PathUtil.get(t, pathArray)
 	for i, token in pathArray do
 		t = t[token]
-		if t == nil then return nil end
-		if IsPlum(t) and i ~= #pathArray then
+		if t == nil then 
+			return nil
+		end
+		if type(t) == "table" and t._isPlum and i ~= #pathArray then
 			t = t.Data
 		end
 	end
@@ -113,7 +101,9 @@ function PathUtil.toArray(pathString)
 	local pathArray = string.split(pathString, ".")
 	for i, v in pathArray do
 		local n = tonumber(v)
-		if n then pathArray[i] = n end
+		if n then 
+			pathArray[i] = n
+		end
 	end
 	
 	toArrayCache[pathString] = pathArray

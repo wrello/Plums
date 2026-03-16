@@ -53,7 +53,6 @@ local Await = require(script.Parent.Util.Await)
 local t = require(script.Parent.Util.t)
 local SquashCodec = require(script.Parent.Util.SquashCodec)
 local ClientReady = require(script.Parent.Util.ClientReady)
-local IsPlum = require(script.Parent.Util.IsPlum)
 
 local player = Players.LocalPlayer
 
@@ -104,14 +103,16 @@ end
 
 local function processRemovedSubPlums(parentPlum, t, isDestroying)
 	for k, v in t do
-		if IsPlum(v) then
-			if isDestroying then
-				v:_stopBubbleEventsTo(parentPlum)
+		if type(v) == "table" then
+			if v._isPlum then
+				if isDestroying then
+					v:_stopBubbleEventsTo(parentPlum)
+				else
+					v:_updateBubbleEventsTo(parentPlum)
+				end
 			else
-				v:_updateBubbleEventsTo(parentPlum)
+				processRemovedSubPlums(parentPlum, v, isDestroying)
 			end
-		elseif typeof(v) == "table" then
-			processRemovedSubPlums(parentPlum, v, isDestroying)
 		end
 	end
 end
@@ -219,10 +220,10 @@ function PlumsClient:Init()
 				oldValue = plum:_arrayRemoveInternal(pathArray, index)
 			end
 			
-			if oldValue then
-				if IsPlum(oldValue) then
+			if type(oldValue) == "table" then
+				if oldValue._isPlum then
 					oldValue:_updateBubbleEventsTo(plum)
-				elseif type(oldValue) == "table" then
+				else
 					processRemovedSubPlums(plum, oldValue)
 				end
 			end
@@ -233,8 +234,6 @@ function PlumsClient:Init()
 		local cursor = SQ_FROM_BUFF(buf)
 		local plumClassName = SQ_STR_DES(cursor)
 		local plumId = SQ_U32_DES(cursor)
-
-		print("plum received", plumId, plumClassName, plumClients, plumData)
 
 		local plum = Plum.new(plumId, plumClassName, plumData, plumClients)
 

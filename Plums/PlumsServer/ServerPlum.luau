@@ -235,8 +235,7 @@ local Maid = require(script.Parent.Parent.Util.Maid)
 local t = require(script.Parent.Parent.Util.t)
 local ClientReady = require(script.Parent.Parent.Util.ClientReady)
 local SquashCodec = require(script.Parent.Parent.Util.SquashCodec)
-local PlumBase = require(script.Parent.Parent.Util.PlumBase)
-local IsPlum = require(script.Parent.Parent.Util.IsPlum)
+local PlumInternal = require(script.Parent.Parent.Util.PlumInternal)
 
 local IS_STUDIO = RunService:IsStudio()
 
@@ -255,23 +254,6 @@ local plumReceivedRE do
 	plumReceivedRE = Instance.new("RemoteEvent")
 	plumReceivedRE.Name = "PlumReceivedRE"
 	plumReceivedRE.Parent = script.Parent.Parent
-end
-
-local typeCheck = {} do
-	local pathType = t.array(t.union(t.number, t.string))
-
-	typeCheck._setValueServerOnly = t.strict(t.tuple(pathType, t.optional(t.any)))
-	typeCheck._arrayInsertServerOnly = t.strict(t.tuple(pathType, t.optional(t.any), t.optional(t.integer)))
-	typeCheck._arrayRemoveServerOnly = t.strict(t.tuple(pathType, t.integer))
-	
-	typeCheck.IsClient = t.strict(t.tuple(t.instanceOf("Player")))
-	typeCheck.IncValue = t.strict(t.tuple(pathType, t.optional(t.number)))
-	typeCheck.MultiplyValue = t.strict(t.tuple(pathType, t.optional(t.number)))
-	typeCheck.AddClients = t.strict(t.tuple(t.union(t.instanceOf("Player"), t.array(t.instanceOf("Player")))))
-	typeCheck.RemoveClients = t.strict(t.tuple(t.union(t.instanceOf("Player"), t.array(t.instanceOf("Player")))))
-	typeCheck.BroadcastTo = t.strict(t.tuple(t.union(t.array(t.instanceIsA("Player")), t.instanceIsA("Player"))))
-	typeCheck.BindToInstance = t.strict(t.tuple(t.Instance))
-	typeCheck.WaitFor = t.strict(t.tuple(t.array(t.union(t.string, t.number))))
 end
 
 local currentServerPlumId = 0
@@ -297,15 +279,15 @@ local function compressSubPlumsShallowest(t, callback, visited)
 		if type(v) ~= "table" then
 			result[k] = v
 		else
-			if not IsPlum(v) then
-				result[k] = compressSubPlumsShallowest(v, callback, visited)
-			else
+			if v._isPlum then
 				if callback then
 					callback(v)
 				end
-				
+
 				-- Replace sub-plum with its id for replication to client
 				result[k] = plumToIdBuf(v)
+			else
+				result[k] = compressSubPlumsShallowest(v, callback, visited)
 			end
 		end
 	end
@@ -322,12 +304,14 @@ local function forEachSubPlumDeepToShallow(t, callback, visited)
 	visited[t] = true -- Prevent cycles
 
 	for k, v in t do
-		if IsPlum(v) then
-			-- First go as deep as possible
-			forEachSubPlumDeepToShallow(v.Data, callback, visited)
-			callback(v)
-		elseif type(v) == "table" then
-			forEachSubPlumDeepToShallow(v, callback, visited)
+		if type(v) == "table" then
+			if v._isPlum then
+				-- First go as deep as possible
+				forEachSubPlumDeepToShallow(v.Data, callback, visited)
+				callback(v)
+			else
+				forEachSubPlumDeepToShallow(v, callback, visited)
+			end
 		end
 	end
 end
@@ -342,44 +326,50 @@ local function forEachSubPlumShallowest(t, callback, visited)
 	visited[t] = true -- Prevent cycles
 
 	for k, v in t do
-		if IsPlum(v) then
-			callback(v)
-		elseif type(v) == "table" then
-			forEachSubPlumShallowest(v, callback, visited)
+		if type(v) == "table" then
+			if v._isPlum then
+				callback(v)
+			else
+				forEachSubPlumShallowest(v, callback, visited)
+			end
 		end
 	end
 end
 
-local ServerPlum = PlumBase
+local ServerPlum = PlumInternal
 
 -------------
 -- Private --
 -------------
-function ServerPlum:_processNewSubPlums(t)
-	if IsPlum(t) then
-		t:AddClients(self.Clients)
-		t:_bubbleEventsTo(self)
-		t = plumToIdBuf(t)
-	elseif type(t) == "table" then
-		t = compressSubPlumsShallowest(t, function(subPlum)
-			subPlum:AddClients(self.Clients)
-			subPlum:_bubbleEventsTo(self)
-		end)
+function ServerPlum:_processNewSubPlums(newValue)
+	if type(newValue) == "table" then
+		if newValue._isPlum then
+			newValue:AddClients(self.Clients)
+			newValue:_bubbleEventsTo(self)
+			newValue = plumToIdBuf(newValue)
+		else
+			newValue = compressSubPlumsShallowest(newValue, function(subPlum)
+				subPlum:AddClients(self.Clients)
+				subPlum:_bubbleEventsTo(self)
+			end)
+		end
 	end
-	return t
+	return newValue
 end
 
 function ServerPlum:_processRemovedSubPlums(oldValue, isDestroying)
-	if IsPlum(oldValue) then
-		oldValue:_updateBubbleEventsTo(self)
-	elseif type(oldValue) == "table" then
-		forEachSubPlumShallowest(oldValue, function(subPlum)
-			if isDestroying then
-				subPlum:_stopBubbleEventsTo(self)
-			else
-				subPlum:_updateBubbleEventsTo(self)
-			end
-		end)
+	if type(oldValue) == "table" then
+		if oldValue._isPlum then
+			oldValue:_updateBubbleEventsTo(self)
+		else
+			forEachSubPlumShallowest(oldValue, function(subPlum)
+				if isDestroying then
+					subPlum:_stopBubbleEventsTo(self)
+				else
+					subPlum:_updateBubbleEventsTo(self)
+				end
+			end)
+		end
 	end
 end
 
@@ -470,17 +460,23 @@ function ServerPlum:_replicate(methodName, ...)
 end
 
 function ServerPlum:_setValueServerOnly(pathArray, newValue)
-	typeCheck._setValueServerOnly(pathArray, newValue)
+	--if IS_STUDIO then
+	--	t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.any)))(pathArray, newValue)
+	--end
 	local oldValue, subPaths = self:_setValueInternal(pathArray, newValue)
 	self:_processRemovedSubPlums(oldValue)
 	return oldValue, subPaths
 end
 function ServerPlum:_arrayInsertServerOnly(pathArray, newValue, index)
-	typeCheck._arrayInsertServerOnly(pathArray, newValue, index)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.any), t.optional(t.integer)))(pathArray, newValue, index)
+	end
 	return self:_arrayInsertInternal(pathArray, newValue, index)
 end
 function ServerPlum:_arrayRemoveServerOnly(pathArray, index)
-	typeCheck._arrayRemoveServerOnly(pathArray, index)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.integer))(pathArray, index)
+	end
 	local oldValue, subPaths = self:_arrayRemoveInternal(pathArray, index)
 	self:_processRemovedSubPlums(oldValue)
 	return oldValue, subPaths
@@ -518,6 +514,7 @@ function ServerPlum.new(plumClassName, plumData)
 	self.ClientRemoved = maid:Add(Signal.new())
 	self.Destroyed = maid:Add(Signal.new())
 	
+	self._isPlum = true
 	self._bubbleTo = {}
 	self._hasReceivedPlum = {}
 	self._hasBeenAddedOnce = {}
@@ -587,6 +584,10 @@ function ServerPlum:SetValue(pathArray, newValue)
 	-- Server modification
 	local oldValue, subPaths = self:_setValueServerOnly(pathArray, newValue)
 	
+	if #self.Clients == 0 then
+		return
+	end
+	
 	-- Process new sub plums
 	local newValue = self:_processNewSubPlums(newValue)
 
@@ -613,6 +614,10 @@ function ServerPlum:ArrayInsert(pathArray, newValue, index)
 	-- Server modification
 	local subPaths, index = self:_arrayInsertServerOnly(pathArray, newValue, index)
 
+	if #self.Clients == 0 then
+		return
+	end
+
 	-- Process new sub plums
 	local newValue = self:_processNewSubPlums(newValue)
 
@@ -636,6 +641,10 @@ end
 function ServerPlum:ArrayRemove(pathArray, index)
 	-- Server modification
 	local oldValue, subPaths = self:_arrayRemoveServerOnly(pathArray, index)
+	
+	if #self.Clients == 0 then
+		return
+	end
 	
 	-- Replication starting with topmost plum (self)
 	local hitClients = {}
@@ -689,12 +698,16 @@ function ServerPlum:ArrayRemoveServerOnly(pathArray, index)
 end
 
 function ServerPlum:IsClient(player)
-	typeCheck.IsClient(player)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.instanceOf("Player")))(player)
+	end
 	return table.find(self.Clients, player) ~= nil
 end
 
 function ServerPlum:IncValue(pathArray, increment)
-	typeCheck.IncValue(pathArray, increment)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.number)))(pathArray, increment)
+	end
 	local oldValue = PathUtil.get(self.Data, pathArray)
 	return self:SetValue(pathArray, math.round((oldValue or 0) + (increment or 1)))
 end
@@ -704,13 +717,17 @@ function ServerPlum:DecValue(pathArray, decrement)
 end
 
 function ServerPlum:MultiplyValue(pathArray, multiplier)
-	typeCheck.MultiplyValue(pathArray, multiplier)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.number)))(pathArray, multiplier)
+	end
 	local oldValue = PathUtil.get(self.Data, pathArray)
 	return self:SetValue(pathArray, (oldValue or 0) * (multiplier or 1))
 end
 
 function ServerPlum:AddClients(clients)
-	typeCheck.AddClients(clients)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.union(t.instanceOf("Player"), t.array(t.instanceOf("Player")))))(clients)
+	end
 	
 	if typeof(clients) == "Instance" then
 		clients = {clients}	
@@ -733,7 +750,9 @@ function ServerPlum:AddAllClients()
 end
 
 function ServerPlum:RemoveClients(clients)
-	typeCheck.RemoveClients(clients)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.union(t.instanceOf("Player"), t.array(t.instanceOf("Player")))))(clients)
+	end
 	
 	if typeof(clients) == "Instance" then
 		clients = {clients}
@@ -804,7 +823,9 @@ function ServerPlum:DisableAutoAddClients()
 end
 
 function ServerPlum:WaitFor(path)
-	typeCheck.WaitFor(path)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number))))(path)
+	end
 	local val = PathUtil.get(self.Data, path)
 	if not val then
 		return self.ValueChanged(path):Wait()
@@ -817,7 +838,9 @@ function ServerPlum:Broadcast(...)
 end
 
 function ServerPlum:BroadcastTo(clients, ...)
-	typeCheck.BroadcastTo(clients, ...)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.union(t.array(t.instanceIsA("Player")), t.instanceIsA("Player"))))(clients, ...)
+	end
 	for _, client in clients do
 		if self:IsClient(client) then
 			self:_replicateTo(client, "Broadcast", ...)
@@ -828,7 +851,9 @@ function ServerPlum:BroadcastTo(clients, ...)
 end
 
 function ServerPlum:BindToInstance(instance)
-	typeCheck.BindToInstance(instance)
+	if IS_STUDIO then
+		t.strict(t.tuple(t.Instance))(instance)
+	end
 	
 	self:SetValue({"Instance"}, instance)
 	
