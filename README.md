@@ -22,7 +22,7 @@ end
 pointer[path[#path]] = value
 ```
 
-Plums does needs to much more work to account for nested sub-plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
+Plums does needs to much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
 
 <h2>Quick Start</h2>
 
