@@ -25,10 +25,12 @@ pointer[path[#path]] = value
 
 Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
 <h3>Packet Size</h3>
-Initial replication comparison:
-<img src="Images/create_packet_size.png" alt="plums icon" width="150">
-Method replication comparison:
-<img src="Images/method_packet_size.png" alt="plums icon" width="150">
+Results from a test with a small table: [/Images](/Images)
+
+| Packet Type | Replica Size | Plum Size |
+| --- | --- | --- |
+| Instantiation | 88 bytes | 82 bytes |
+| Method | 63 bytes | 62 bytes |
 
 <h2>Quick Start</h2>
 
