@@ -13,7 +13,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Quick Start</h2>
 
-Client and server must be initialized somewhere first:
+Initialize client & server first:
 ```lua
 Plums:Init()
 ```
