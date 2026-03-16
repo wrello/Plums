@@ -13,6 +13,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Comparing to Replica</h2>
 <h3>Speed</h3>
+
 The entirity of Replica's server-side compute time is taken up by the following path resolution algorithm:
 ```lua
 local pointer = self.Data
