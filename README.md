@@ -67,7 +67,7 @@ Plums performs additional path resolutions for:
 This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
 <h3>Packet Size</h3>
 
-Results with a small table:
+Results with a small data table:
 
 | Packet Type | Replica Size | Plum Size (compressed with Squash) |
 | --- | --- | --- |
