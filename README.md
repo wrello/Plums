@@ -102,4 +102,4 @@ end)
 plum:SetValue({"Items"}, nil)
 ```
 
-Inspired by loleris's ReplicaService.
+Inspired by loleris's [ReplicaService](https://github.com/MadStudioRoblox/ReplicaService).
