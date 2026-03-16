@@ -1,4 +1,4 @@
-<img src="images/plums_icon.png" alt="plums icon" width="150">
+<img src="Images/plums_icon.png" alt="plums icon" width="150">
 <h1>Plums</h1>
 
 API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
@@ -7,28 +7,9 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 - Supports nested plums
 - Includes server-side plum events
-- Propogates value changed events from sub-tables
+- Propagates value changed events from sub-tables
 - Supports `Event:Observe()` to collect prior values
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
-
-<h2>Comparing to Replica</h2>
-<h3>Speed</h3>
-
-The entirity of Replica's server-side compute time is taken up by the following path resolution algorithm:
-```lua
-local pointer = self.Data
-for i = 1, #path - 1 do
-  pointer = pointer[path[i]]
-end
-pointer[path[#path]] = value
-```
-
-Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
-<h3>Packet Size</h3>
-Initial replication comparison:
-<img src="images/create_packet_size.png" alt="plums icon" width="150">
-Method replication comparison:
-<img src="images/method_packet_size.png" alt="plums icon" width="150">
 
 <h2>Quick Start</h2>
 
@@ -66,5 +47,31 @@ Plums.PlumReceived("Player"):Observe(function(playerPlum)
 end)
 ```
 
+<h2>Comparing With Replica</h2>
+loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
+<h3>Speed</h3>
+
+Replica resolves a single path in its table modification methods:
+```lua
+local pointer = self.Data
+for i = 1, #path - 1 do
+  pointer = pointer[path[i]]
+end
+pointer[path[#path]] = value
+```
+Plums performs additional path resolutions for:
+- nested plums
+- server-side event listeners
+- propagation of value-change events through nested structures
+
+This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
+<h3>Packet Size</h3>
+
+Results with a small table:
+
+| Packet Type | Replica Size | Plum Size (compressed with Squash) |
+| --- | --- | --- |
+| Initial object send | 88 bytes | 82 bytes |
+| Method replication | 63 bytes | 62 bytes |
 
 
