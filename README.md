@@ -25,7 +25,7 @@ pointer[path[#path]] = value
 
 Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
 <h3>Packet Size</h3>
-Results from a test with a small table: [/Images](/Images)
+Results from a test with a small table: [images](https://github.com/wrello/Plums/tree/main/Images)
 
 | Packet Type | Replica Size | Plum Size |
 | --- | --- | --- |
