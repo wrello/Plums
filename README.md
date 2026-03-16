@@ -29,11 +29,11 @@ __Supports nested plums:__
 
 Server:
 ```lua
-local objectPlum = Plums.new("Object", {
+local nestedPlum = Plums.new("Nested", {
   NestedValue = 5
 })
 local playerPlum = Plums.new("Player", {
-  Object = objectPlum
+  NestedPlum = nestedPlum
 }):AddAllClients():EnableAutoAddClient()
 
 playerPlum:SetValue({"Object", "NestedValue"}, 5)
@@ -44,7 +44,7 @@ Client:
 Plums.PlumReceived("Player"):Observe(function(playerPlum)
   print("Player plum received:", playerPlum.Data)
 
-  playerPlum.ValueChanged({"Object", "NestedValue"}):Observe(function(newVal, oldVal)
+  playerPlum.ValueChanged({"NestedPlum", "NestedValue"}):Observe(function(newVal, oldVal)
     print("NestedValue:", newVal)
   end)
 end)
