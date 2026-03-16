@@ -1,4 +1,4 @@
-<img src="plums_icon.png" alt="plums icon" width="150">
+<img src="images/plums_icon.png" alt="plums icon" width="150">
 <h1>Plums</h1>
 
 API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
@@ -25,6 +25,10 @@ pointer[path[#path]] = value
 
 Plums' server-side needs to do much more work to account for nested plums and server-side event listeners, which can make table modification calls up to 10x slower than that algorithm.
 <h3>Packet Size</h3>
+Initial replication comparison:
+<img src="images/create_packet_size.png" alt="plums icon" width="150">
+Method replication comparison:
+<img src="images/method_packet_size.png" alt="plums icon" width="150">
 
 <h2>Quick Start</h2>
 
