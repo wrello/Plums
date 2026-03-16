@@ -64,7 +64,7 @@ Plums performs additional path resolutions for:
 - server-side event listeners
 - propagation of value-change events through nested structures
 
-This can cause table modification methods to be up to ~10× slower. In practice though, this should not be noticable.
+This can cause table modification methods to be up to ~10× slower (after optimization). In practice though, this should not be noticable.
 <h3>Packet Size</h3>
 
 Results with a small table:
