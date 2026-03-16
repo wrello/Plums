@@ -25,8 +25,9 @@ local Plums = require(game.ReplicatedStorage.Plums.PlumsClient)
 Plums:Init()
 ```
 
-Then create a plum on the server:
+Then create a plum:
 ```lua
+-- Server
 local playerPlum = Plums.new("Player", {
   Coins = 0
 }):AddAllClients():EnableAutoAddClient()
@@ -34,8 +35,9 @@ local playerPlum = Plums.new("Player", {
 playerPlum:SetValue({"Coins"}, 5)
 ```
 
-And listen to changes the client:
+And listen to its changes:
 ```lua
+-- Client
 Plums.PlumReceived("Player"):Observe(function(playerPlum)
   print("Player plum received:", playerPlum.Data)
 
