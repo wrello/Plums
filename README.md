@@ -51,7 +51,7 @@ end)
 loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
 <h3>Speed</h3>
 
-The entirity of Replica's server-side compute (in table modification methods) is taken up by the following path resolution algorithm:
+The entirity of Replica's server-side compute in table modification methods is taken up by the following path resolution algorithm:
 ```lua
 local pointer = self.Data
 for i = 1, #path - 1 do
