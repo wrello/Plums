@@ -1,4 +1,4 @@
-<p align="center">
+<div align="center">
   <img src="plums_icon.png" alt="plums icon" width="200">
-  <p>Plums</p>
-</p>
+  <h1>Plums</h1>
+</div>
