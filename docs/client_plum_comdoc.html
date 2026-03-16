@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="comdoc-tab" content="Client Plum">
+<meta name="comdoc-order" content="3"> 
+<meta charset="UTF-8">
+<title>ClientPlum.luau</title>
+<style>
+body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #ffffff; }
+.comdoc-container { padding: 20px; }
+.comdoc-body { white-space: pre-wrap; word-break: break-word; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; margin: 0; }
+.nav { 
+    background: #f5f5f5; 
+    padding: 12px 20px; 
+    border-bottom: 1px solid rgba(0,0,0,0.1); 
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.tab { opacity: 0.7; margin-right: 20px; text-decoration: none; font-size: 16px; color: inherit; }
+.tab:hover { opacity: 1; }
+.tab.active { opacity: 1; font-weight: bold; text-decoration: underline; }
+</style>
+</head>
+<body>
+<script src="./comdoc_tabs.js"></script>
+<div class="comdoc-container"><div style="font-size: 11px; opacity: 0.5; font-style: italic; margin-bottom: 10px;">Last updated: Mar 15, 2026</div><pre class="comdoc-body">
+	<span style="font-weight: bold;">[ Properties ]</span>
+	
+		.Data : {}
+		
+			The data table of the plum.
+		
+		
+		.Clients : {Player}
+		
+			The array of clients that have been added to the plum.
+			
+		
+		.ClassName : string
+		
+			The class name that the plum was created with.
+			
+		
+		.Id : number
+		
+			The unique id of the plum (e.g. 1, 2, 3, ...).
+	
+	
+		.IsDestroyed : boolean?
+		
+			Will be true if 'plum:Destroy()' has been called.
+	
+	
+	<span style="font-weight: bold;">[ Methods ]</span>
+	
+		:IsClient(player : Player) -&gt; boolean
+	
+			Returns true if the 'player' is currently in the 'plum.Clients' array.
+	
+		
+		:WaitFor(path : {string | number}) -&gt; any?
+		
+			Yields until the value at 'path' is not nil and returns the value.
+			
+		
+		:InvokeServer(...any?) -&gt; ...any?
+		
+			Invokes the '.OnServerInvoke' callback function on the server with the provided args and returns what the callback returns.
+
+	
+	<span style="font-weight: bold;">[ Events ]</span>
+		
+		.ValueChanged(path : {string | number})
+		
+			:Observe() -- Collects current value at 'path' and listens for new changes to it
+			:Connect() -- Listens for new changes to 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			Plums.PlumReceived("Player"):Observe(function(playerPlum)
+				playerPlum.ValueChanged({"Money"}):Observe(function(newValue, oldValue)
+					print("Money changed! New value:", newValue, "Old value:", oldValue)
+				end)
+			end)
+			</span>
+			
+			
+		.OnArrayInsert(path : {string | number})
+		
+			:Observe() -- Collects current values in the array at 'path' and listens for new inserts into it
+			:Connect() -- Listens for new inserts into the array at 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			Plums.PlumReceived("Player"):Observe(function(playerPlum)
+				playerPlum.OnArrayInsert({"Items"}):Observe(function(newValue, index)
+					print("Item added! New value:", newValue, "Index:", index)
+				end)
+			end)
+			</span>
+			
+			
+		.OnArrayRemove(path : {string | number})
+		
+			:Connect() -- Listens for removals from the array at 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			Plums.PlumReceived("Player"):Observe(function(playerPlum)
+				playerPlum.OnArrayRemove({"Items"}):Connect(function(oldValue, index)
+					print("Item removed! Old value:", oldValue, "Index:", index)
+				end)
+			end)
+			</span>
+			
+			
+		.OnRaw
+		
+			:Connect() -- Listens to events from the server fired on ':SetValue()'/':ArrayInsert()'/':ArrayRemove()'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			Plums.PlumReceived("Player"):Observe(function(playerPlum)
+				playerPlum.OnRaw:Connect(function(methodName, path, ...)
+					print("On raw! Method name:", methodName, "Path array:", path, "Args:", ...)
+				end)
+			end)
+			</span>
+		
+		.OnBroadcast
+		
+			:Connect() -- Listens to events from the server fired on ':Broadcast()'/':BroadcastTo()'
+		
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			Plums.PlumReceived("Player"):Observe(function(playerPlum)
+				playerPlum.OnBroadcast:Connect(function(...)
+					print("On broadcast! Args:", ...)
+				end)
+			end)
+			</span>
+			
+			
+		.ClientAdded
+		
+			:Observe() -- Collects the current clients in the 'plum.Clients' array and listens for new ones added
+			:Connect() -- Listens for new clients added to the 'plum.Clients' array
+			
+		
+		.ClientRemoved
+		
+			:Connect() -- Listens for a client removed from the 'plum.Clients' array
+			
+			
+		.LocalClientAdded
+		
+			:Connect() -- Listens for when the 'LocalPlayer' has been re-added to the plum (does not fire the first time they are added)
+			
+		
+		.LocalClientRemoved
+		
+			:Connect() -- Listens for when the 'LocalPlayer' has been removed from the plum
+			
+		
+		.Destroyed
+		
+			:Connect() -- Listens for when the server calls ':Destroy()'
+			
+
+</pre></div>
+</body>
+</html>

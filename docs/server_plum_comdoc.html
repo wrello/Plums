@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="comdoc-tab" content="Server Plum">
+<meta name="comdoc-order" content="4"> 
+<meta charset="UTF-8">
+<title>ServerPlum.luau</title>
+<style>
+body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #ffffff; }
+.comdoc-container { padding: 20px; }
+.comdoc-body { white-space: pre-wrap; word-break: break-word; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; margin: 0; }
+.nav { 
+    background: #f5f5f5; 
+    padding: 12px 20px; 
+    border-bottom: 1px solid rgba(0,0,0,0.1); 
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.tab { opacity: 0.7; margin-right: 20px; text-decoration: none; font-size: 16px; color: inherit; }
+.tab:hover { opacity: 1; }
+.tab.active { opacity: 1; font-weight: bold; text-decoration: underline; }
+</style>
+</head>
+<body>
+<script src="./comdoc_tabs.js"></script>
+<div class="comdoc-container"><div style="font-size: 11px; opacity: 0.5; font-style: italic; margin-bottom: 10px;">Last updated: Mar 15, 2026</div><pre class="comdoc-body">
+	<span style="font-weight: bold;">[ Properties ]</span>
+	
+		.Data : {}
+		
+			The data table of the plum.
+		
+		
+		.Clients : {Player}
+		
+			The array of clients that have been added to the plum.
+			
+		
+		.ClassName : string
+		
+			The class name that the plum was created with.
+			
+		
+		.Id : number
+		
+			The unique id of the plum (e.g. 1, 2, 3, ...).
+			
+			
+		.IsDestroyed : boolean?
+		
+			Will be true if 'plum:Destroy()' has been called.
+	
+	
+	<span style="font-weight: bold;">[ Methods ]</span>
+	
+		:SetValue(path : {string | number}, newValue : any?) -&gt; any?
+		
+			Replaces the old value at 'path' with 'newValue' and returns the old value.
+	
+			':SetValueServerOnly()' doesn't replicate to clients.
+	
+			Number-based ':SetValue()' wrappers:
+	
+				:IncValue(path : {string | number}, increment : number?) -&gt; any?
+				
+					Increments the old value at 'path' by 1 and returns the old value.
+					
+					':IncValueServerOnly()' doesn't replicate to clients.
+				
+				
+				:DecValue(path : {string | number}, decrement : number?) -&gt; any?
+				
+					Decrements the old value at 'path' by 1 and returns the old value.
+					
+					':DecValueServerOnly()' doesn't replicate to clients.
+				
+				
+				:MultiplyValue(path : {string | number}, multiplier : number?) -&gt; any?
+			
+					Multiplies the old value at 'path' by 'multiplier' and returns the old value.
+					
+					':MultiplyValueServerOnly()' doesn't replicate to clients.
+	
+	
+		:ArrayInsert(path : {string | number}, newValue : any?, index : integer?)
+			
+			Inserts the 'newValue' at a position of 'index' or at the end of the target array found at 'path'.
+		
+			':ArrayInsertServerOnly()' doesn't replicate to clients.
+		
+		
+		:ArrayRemove(path : {string | number}, index : integer) -&gt; any?
+	
+			Removes the old value at the position of 'index' in the target array found at 'path' and returns the old value.
+			
+			':ArrayRemoveServerOnly()' doesn't replicate to clients.
+	
+	
+		:IsClient(player : Player) -&gt; boolean
+		
+			Returns true if the 'player' is in the 'plum.Clients' array.
+			
+
+		:AddClients(clients : Player | {Player}) -&gt; self
+		
+			Adds the 'clients' to the 'plum.Clients' array.
+		
+		
+		:AddAllClients() -&gt; self
+		
+			Adds all in-game players to the 'plum.Clients' array.
+			
+			
+		:EnableAutoAddClients() -&gt; self
+		
+			Starts adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
+		
+		
+		:DisableAutoAddClients()
+		
+			Stops adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
+		
+		
+		:RemoveClients(clients : Player | {Player})
+		
+			Removes the 'clients' from the 'plum.Clients' array.
+
+
+		:WaitFor(path : {string | number}) -&gt; any
+			
+			Yields until the value at 'path' is not nil and returns the value.
+
+
+		:Broadcast(...any?)
+		
+			Sends all 'plum.Clients' some arguments.
+			
+		
+		:BroadcastTo(clients : Player | {Player}, ...any?)
+
+			Sends 'clients' some arguments.
+		
+
+		:BindToInstance(instance : Instance) -&gt; self
+		
+			Destroys the plum when 'instance' is destroyed.
+	
+		
+		:WaitFor(path : {string | number}) -&gt; any?
+		
+			Yields until the value at 'path' is not nil and returns the value.
+			
+	
+		:Destroy()
+		
+			Destroys the plum, disconnecting all connections to its events.
+	
+	
+	<span style="font-weight: bold;">[ Events ]</span>
+		
+		.OnServerInvoke = function(player: Player, ...any?) -&gt; ...any?
+		
+			Set this to a function in order to listen to 'clientPlum:InvokeServer()' calls.
+		
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.OnServerInvoke = function(player, ...)
+				print("On server invoke! Player:", player, "Args:", ...)
+				return "response from server"
+			end)
+			</span>
+		
+		
+		.ValueChanged(path : {string | number})
+		
+			:Observe() -- Collects current value at 'path' and listens for new changes to it
+			:Connect() -- Listens for new changes to 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.ValueChanged({"Money"}):Observe(function(newValue, oldValue)
+				print("Money changed! New value:", newValue, "Old value:", oldValue)
+			end)
+			</span>
+			
+			
+		.OnArrayInsert(path : {string | number})
+		
+			:Observe() -- Collects current values in the array at 'path' and listens for new inserts into it
+			:Connect() -- Listens for new inserts into the array at 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.OnArrayInsert({"Items"}):Observe(function(newValue, index)
+				print("Item added! New value:", newValue, "Index:", index)
+			end)
+			</span>
+			
+			
+		.OnArrayRemove(path : {string | number})
+		
+			:Connect() -- Listens for removals from the array at 'path'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.OnArrayRemove({"Items"}):Connect(function(oldValue, index)
+				print("Item removed! Old value:", oldValue, "Index:", index)
+			end)
+			</span>
+			
+			
+		.OnRaw
+		
+			:Connect() -- Listens to events fired on ':SetValue()'/':ArrayInsert()'/':ArrayRemove()'
+			
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.OnRaw:Connect(function(methodName, path, ...)
+				print("On raw! Method name:", methodName, "Path array:", path, "Args:", ...)
+			end)
+			</span>
+			
+			
+		.OnBroadcast
+		
+			:Connect() -- Listens to events fired on ':Broadcast()'/':BroadcastTo()'
+		
+			<span style="font-family: monospace; tab-size: 4; background: #f4f4f4; display: block">
+			playerPlum.OnBroadcast:Connect(function(...)
+				print("On broadcast! Args:", ...)
+			end)
+			</span>
+			
+			
+		.ClientAdded
+		
+			:Observe() -- Collects the current clients in the 'plum.Clients' array and listens for new ones added
+			:Connect() -- Listens for new clients added to the 'plum.Clients' array
+			
+		
+		.ClientRemoved
+		
+			:Connect() -- Listens for a client removed from the 'plum.Clients' array
+			
+
+		.Destroyed
+		
+			:Connect() -- Listens for when the server calls ':Destroy()'
+			
+			
+</pre></div>
+</body>
+</html>
