@@ -1,7 +1,7 @@
 <img src="plums_icon.png" alt="plums icon" width="150">
 <h1>Plums</h1>
 
-API: wrello.github.io/Plums/
+API: [](wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
