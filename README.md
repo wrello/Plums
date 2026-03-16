@@ -69,7 +69,7 @@ This can cause table modification methods to be up to ~10× slower. In practice 
 
 Results with a small table:
 
-| Packet Type | Replica Size | Plum Size (compressed) |
+| Packet Type | Replica Size | Plum Size (compressed with Squash) |
 | --- | --- | --- |
 | Initial object send | 88 bytes | 82 bytes |
 | Method replication | 63 bytes | 62 bytes |
