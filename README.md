@@ -13,7 +13,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Speed</h2>
 
-Plum table modification methods are 4× slower than loleris's Replica without nested plums or events, and up to 10×+ slower when a plum needs to traverse nested plums and server-side event listeners.
+Plum table modification methods are 4× slower than loleris's Replica without nested plums or server-side events listeners, and up to 10×+ slower traversing nested plums and server-side event listeners.
 
 <h2>Quick Start</h2>
 
