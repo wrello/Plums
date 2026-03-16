@@ -51,7 +51,7 @@ end)
 loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
 <h3>Speed</h3>
 
-Replica’s table modification logic primarily resolves a path and writes a value:
+Replica’s work in table modification methods is resolving a single path:
 ```lua
 local pointer = self.Data
 for i = 1, #path - 1 do
@@ -59,12 +59,12 @@ for i = 1, #path - 1 do
 end
 pointer[path[#path]] = value
 ```
-Plums performs additional work to support:
+Plums performs additional path resolutions for:
 - nested plums
 - server-side event listeners
 - propagation of value-change events through nested structures
 
-Because of this extra processing, table modification methods can be up to ~10× slower. In practice though, this should not be noticable.
+This can cause table modification methods to be up to ~10× slower. In practice though, this should not be noticable.
 <h3>Packet Size</h3>
 
 Results with a small table:
