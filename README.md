@@ -18,7 +18,8 @@ Initialize client-side & server-side first:
 -- Server
 local Plums = require(game.ReplicatedStorage.Plums.PlumsServer)
 Plums:Init()
-
+```
+```lua
 -- Client
 local Plums = require(game.ReplicatedStorage.Plums.PlumsClient)
 Plums:Init()
