@@ -54,7 +54,8 @@ end)
 ```
 
 <h2>Comparing With Replica</h2>
-loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
+
+loleris's ReplicaService (now [Replica](https://github.com/MadStudioRoblox/Replica)) was the inspiration for this library, here are some comparisons with Replica...
 
 <h3>Boilerplate</h3>
 
