@@ -89,7 +89,7 @@ replica:Replicate()
 -- Plum
 local plum = Plums.new("Plum", {
   Value = 0
-}):AddAllClients():EnableAutoAddClients()
+}):AddAllClients():EnableAutoAddClient()
 ```
 Listening for a new plum and updating a text label's value:
 ```lua
