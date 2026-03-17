@@ -77,6 +77,7 @@ Replica.OnNew("Replica", function(replica)
   local function updateCoinsText(newCoins)
     textLabel.Text = newCoins .. " Coins"
   end
+  
   updateCoinsText(replica.Data.Coins) -- Run once on load in
   replica:OnSet({"Coins"}, updateCoinsText)
 end)
