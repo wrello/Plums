@@ -58,7 +58,7 @@ loleris's ReplicaService (now Replica) was the inspiration for this library, her
 
 <h3>Boilerplate</h3>
 
-Creating a plum and replicating it to select players:
+Creating a plum and replicating it to specific players:
 ```lua
 local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
   Value = 0
@@ -76,7 +76,7 @@ local plum = Plums.new("Plum", {
   Value = 0
 }):AddClients(player)
 ```
-
+Listening for a new plum and updating a text label's value:
 ```lua
 Replica.RequestData()
 
