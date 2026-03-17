@@ -70,7 +70,8 @@ while not table.find(replica.ReadyPlayers, player) do
 end
 
 replica:Subscribe(player)
-
+```
+```
 -- Plum
 local plum = Plums.new("Plum", {
   Value = 0
@@ -89,7 +90,8 @@ Replica.OnNew("Player", function(playerReplica)
   updateCoinsText(playerReplica.Data.Coins) -- Run once on load
   playerReplica:OnSet({"Coins"}, updateCoinsText)
 end)
-
+```
+```
 -- Plum
 Plums:Init()
 
