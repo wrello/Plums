@@ -11,6 +11,11 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Supports `Event:Observe()` to collect prior values
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
 
+<h2>Install</h2>
+Roblox model: https://create.roblox.com/store/asset/112997442485158
+Wally: 
+Pesde: 
+
 <h2>Quick Start</h2>
 
 Initialize server & client first:

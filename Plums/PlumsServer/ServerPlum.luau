@@ -63,13 +63,6 @@ comdoc "Server Plum" 4 LastUpdated
 					
 					':DecValueServerOnly()' doesn't replicate to clients.
 				
-				
-				:MultiplyValue(path : {string | number}, multiplier : number) -> number
-			
-					Multiplies the old value at 'path' by 'multiplier' and returns the old value.
-					
-					':MultiplyValueServerOnly()' doesn't replicate to clients.
-	
 	
 		:ArrayInsert(path : {string | number}, newValue : any?, index : integer?)
 			
@@ -100,12 +93,12 @@ comdoc "Server Plum" 4 LastUpdated
 			Adds all in-game players to the 'plum.Clients' array.
 			
 			
-		:EnableAutoAddClients() -> self
+		:EnableAutoAddClient() -> self
 		
 			Starts adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
 		
 		
-		:DisableAutoAddClients()
+		:DisableAutoAddClient()
 		
 			Stops adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
 		
@@ -493,9 +486,9 @@ function ServerPlum:_replicate(methodName, ...)
 end
 
 function ServerPlum:_setValueServerOnly(pathArray, newValue)
-	--if IS_STUDIO then
-	--	t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.any)))(pathArray, newValue)
-	--end
+	if IS_STUDIO then
+		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.any)))(pathArray, newValue)
+	end
 	local oldValue, subPaths = self:_setValueInternal(pathArray, newValue)
 	self:_processRemovedSubPlums(oldValue)
 	return oldValue, subPaths
@@ -710,12 +703,6 @@ function ServerPlum:DecValueServerOnly(pathArray, decrement)
 	return oldValue
 end
 
-function ServerPlum:MultiplyValueServerOnly(pathArray, multiplier)
-	local oldValue = PathUtil.get(self.Data, pathArray)
-	self:_setValueServerOnly(pathArray, (oldValue or 0) * (multiplier or 1))
-	return oldValue
-end
-
 function ServerPlum:SetValueServerOnly(pathArray, newValue)
 	local oldValue = self:_setValueServerOnly(pathArray, newValue)
 	return oldValue
@@ -747,14 +734,6 @@ end
 
 function ServerPlum:DecValue(pathArray, decrement)
 	return self:IncValue(pathArray, -(decrement or 1))
-end
-
-function ServerPlum:MultiplyValue(pathArray, multiplier)
-	if IS_STUDIO then
-		t.strict(t.tuple(t.array(t.union(t.string, t.number)), t.optional(t.number)))(pathArray, multiplier)
-	end
-	local oldValue = PathUtil.get(self.Data, pathArray)
-	return self:SetValue(pathArray, (oldValue or 0) * (multiplier or 1))
 end
 
 function ServerPlum:AddClients(clients)
@@ -807,7 +786,10 @@ function ServerPlum:RemoveClients(clients)
 		-- Fire server-only plumObject.Event
 		self.ClientRemoved:Fire(client)
 
-		self._maid:Remove(client.UserId .. "_LeavingConnection"):Disconnect()
+		local conn = self._maid:Remove(client.UserId .. "_LeavingConnection")
+		if conn then
+			conn:Disconnect()
+		end
 	end
 	
 	if #removedClients == 0 then
@@ -833,26 +815,26 @@ function ServerPlum:RemoveClients(clients)
 	end
 end
 
-function ServerPlum:EnableAutoAddClients()
-	if self._autoAddClientsEnabled then
+function ServerPlum:EnableAutoAddClient()
+	if self._autoAddClientEnabled then
 		return
 	end
 
-	self._autoAddClientsEnabled = true
+	self._autoAddClientEnabled = true
 	self._maid:Add(Players.PlayerAdded:Connect(function(player)
 		self:AddClients(player)
-	end), nil, "AutoAddClientsConnection")
+	end), nil, "AutoAddClientConnection")
 
 	return self
 end
 
-function ServerPlum:DisableAutoAddClients()
-	if not self._autoAddClientsEnabled then
+function ServerPlum:DisableAutoAddClient()
+	if not self._autoAddClientEnabled then
 		return
 	end
 
-	self._autoAddClientsEnabled = false
-	self._maid:Remove("AutoAddClientsConnection"):Disconnect()
+	self._autoAddClientEnabled = false
+	self._maid:Remove("AutoAddClientConnection"):Disconnect()
 end
 
 function ServerPlum:WaitFor(path)
@@ -887,9 +869,7 @@ function ServerPlum:BindToInstance(instance)
 	if IS_STUDIO then
 		t.strict(t.tuple(t.Instance))(instance)
 	end
-	
-	self:SetValue({"Instance"}, instance)
-	
+
 	instance.Destroying:Connect(function()
 		self:Destroy()
 	end)

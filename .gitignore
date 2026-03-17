@@ -1,0 +1,7 @@
+*.toml
+*.ps1
+*.lock
+PesdePackage
+WallyPackage
+roblox_packages
+Packages

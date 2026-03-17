@@ -45,16 +45,6 @@ end
 
 local Await = {}
 
--- The typechecker is not required, but it adds more functionality
-if script:FindFirstChild("t") then
-	Await.t = require(script.t)
-end
-
---[[
-
-	(see Await.first() example)
-	
-]]
 function Await.winnerKey(token)
 	return {WINNER_KEY_FLAG, token}
 end
@@ -63,12 +53,6 @@ function Await.allArgumentsCheck(fn)
 	return {ALL_ARGUMENTS_CHECK_FLAG, fn}
 end
 
---[[
-
-	Fires when an object is parented to nil
-	Fires immediately after '.Destroying'
-
-]]
 function Await.getRemovedFromGameSignal(obj): RBXScriptSignal
 	if removed_from_game_signals[obj] then
 		return removed_from_game_signals[obj]
@@ -100,19 +84,6 @@ function Await.getRemovedFromGameSignal(obj): RBXScriptSignal
 	return removedFromGameSignal
 end
 
---[[
-	
-	local Players = game:GetService("Players")
-	
-	local timeoutDuration = nil -- The timeout duration is optional
-	
-	Await.args(timeoutDuration, Players.PlayerRemoving, function(player)
-		return player.Name == "wrello"
-	end)
-	
-	print("wrello left!")
-	
-]]
 function Await.args(timeout: TimeoutType, event: RBXScriptSignal, ...: any): (boolean, ...any)
 	local thread = coroutine.running()
 	local params = {...}
@@ -152,22 +123,6 @@ function Await.args(timeout: TimeoutType, event: RBXScriptSignal, ...: any): (bo
 	return coroutine.yield()
 end
 
---[[
-	
-	local part = Instance.new("Part")
-	part.Parent = workspace
-	
-	local timeoutDuration = 5 -- The timeout duration is optional
-	
-	local timedOut, hitPart = Await.event(timeoutDuration, part.Touched)
-	
-	if not timedOut then
-		print("touched", hitPart)
-	else
-		print("did not touch anything after", timeoutDuration, "seconds")
-	end
-	
-]]
 function Await.event(timeout: TimeoutType, event: RBXScriptSignal): (boolean, ...any)
 	local thread = coroutine.running()
 
@@ -204,41 +159,6 @@ function Await.event(timeout: TimeoutType, event: RBXScriptSignal): (boolean, ..
 	return coroutine.yield()
 end
 
---[[
-	
-	local part = Instance.new("Part")
-	part.Parent = workspace
-
-	local eventRaceArgs = {
-	
-		{part.Destroying, Await.winnerKey("part destroyed")},
-		
-		{part.Touched, Await.winnerKey("touched by hrp"), function(hitPart)
-			return hitPart.Name == "HumanoidRootPart"
-		end},
-		
-		part:GetPropertyChangedSignal("Name") -- The winner key would default to 2 in this case (that's this event's position in the 'eventRaceArgs' table)
-	
-	}
-
-	local timeoutDuration = nil -- The timeout duration is optional
-
-	-- Wait for the first one to fire
-	local timedOut, winnerKey, winnerArgs = Await.first(timeoutDuration, unpack(eventRaceArgs))
-	
-	
-	-- Use this if you set the timeoutDuration to not nil
-	
-	--if not timedOut then
-	--	print(winnerKey, "was the first event to fire! Passed args:", winnerArgs)
-	--else
-	--  print("no events fired after", timeoutDuration, "seconds")
-	--end
-	
-	
-	print(winnerKey, "was the first event to fire! Passed args:", ...)
-	
-]]
 function Await.first(timeout: TimeoutType, ...: RBXScriptSignal | EventWithSettingsType): (boolean, number?, {any}?)
 	local thread = coroutine.running()
 	
