@@ -9,6 +9,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Includes server-side plum events
 - Supports `Event:Observe()` to collect prior values
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+- Focuses on convenient API
 
 <h2>Install</h2>
 
