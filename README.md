@@ -12,6 +12,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
 
 <h2>Install</h2>
+
 - Roblox model: https://create.roblox.com/store/asset/112997442485158
 - Wally: Plums = "wrello/plums@0.1.0"
 - Pesde: Plums = { name = "wrello/plums", version = "^0.1.0" }
