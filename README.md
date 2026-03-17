@@ -80,7 +80,7 @@ Listening for a new plum and updating a text label's value:
 ```lua
 Replica.RequestData()
 
-Replica.OnNew("PlayerReplica", function(playerReplica)
+Replica.OnNew("Player", function(playerReplica)
   local function updateCoinsText(newCoins)
     textLabel.Text = newCoins .. " Coins"
   end
