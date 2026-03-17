@@ -62,7 +62,7 @@ loleris's ReplicaService (now [Replica](https://github.com/MadStudioRoblox/Repli
 Creating a plum and replicating it to specific players:
 ```lua
 -- Replica
-local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
+local replica = Replica.New({Token = Replica.Token("Replica"), Data = {
   Value = 0
 }})
 
@@ -81,7 +81,7 @@ local plum = Plums.new("Plum", {
 Creating a plum and replicating it to all players:
 ```lua
 -- Replica
-local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
+local replica = Replica.New({Token = Replica.Token("Replica"), Data = {
   Value = 0
 }})
 replica:Replicate()
