@@ -73,12 +73,14 @@ local plum = Plums.new("Plum", {
 
 ```lua
 Replica.OnNew("Replica", function(replica)
+
 end)
 replica.RequestData()
 
 -- becomes
 
 Plums.PlumReceived("Plum"):Observe(function(plum)
+
 end)
 ```
 <h3>Speed</h3>
