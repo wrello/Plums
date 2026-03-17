@@ -36,7 +36,7 @@ Then create a plum:
 -- Server
 local playerPlum = Plums.new("Player", {
   Coins = 0
-}):AddAllClients():EnableAutoAddClient()
+}):AddClient(player)
 
 playerPlum:SetValue({"Coins"}, 5)
 ```
