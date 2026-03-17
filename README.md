@@ -5,11 +5,11 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
-- Supports nested plums
-- Includes server-side plum events
-- Supports `Event:Observe()` to collect prior values
-- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
-- Focuses on convenient API
+- Sub-plums in data tables
+- Server-side plum events
+- `Event:Observe()` to collect prior values
+- [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+- Convenient API
 
 <h2>Install</h2>
 
