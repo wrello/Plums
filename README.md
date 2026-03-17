@@ -73,6 +73,7 @@ local plum = Plums.new("Plum", {
 
 ```lua
 Replica.RequestData()
+...
 Replica.OnNew("Replica", function(replica)
 
 end)
@@ -80,6 +81,7 @@ end)
 -- becomes
 
 Plums:Init()
+...
 Plums.PlumReceived("Plum"):Observe(function(plum)
 
 end)
