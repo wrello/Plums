@@ -58,41 +58,47 @@ loleris's ReplicaService (now Replica) was the inspiration for this library, her
 
 <h3>Boilerplate</h3>
 
+Creating a plum and replicating it to select players:
 ```lua
 local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
   Value = 0
 }})
-replica:Replicate()
+
+while not table.find(replica.ReadyPlayers, player) do
+  replica.NewReadyPlayer:Wait()
+end
+
+replica:Subscribe(player)
 
 -- becomes
 
 local plum = Plums.new("Plum", {
   Value = 0
-}):AddAllClients():EnableAutoAddClient()
+}):AddClients(player)
 ```
 
 ```lua
 Replica.RequestData()
 
-Replica.OnNew("Replica", function(replica)
+Replica.OnNew("PlayerReplica", function(playerReplica)
   local function updateCoinsText(newCoins)
     textLabel.Text = newCoins .. " Coins"
   end
   
-  updateCoinsText(replica.Data.Coins) -- Run once on load
-  replica:OnSet({"Coins"}, updateCoinsText)
+  updateCoinsText(playerReplica.Data.Coins) -- Run once on load
+  playerReplica:OnSet({"Coins"}, updateCoinsText)
 end)
 
 -- becomes
 
 Plums:Init()
 
-Plums.PlumReceived("Plum"):Observe(function(plum)
+Plums.PlumReceived("Player"):Observe(function(playerPlum)
   local function updateCoinsText(newCoins)
     textLabel.Text = newCoins .. " Coins"
   end
 
-  plum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
+  playerPlum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
 end)
 ```
 <h3>Speed</h3>
