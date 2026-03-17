@@ -8,8 +8,8 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Sub-plums in data tables
 - Server-side plum events
 - `Event:Observe()` to collect prior values
-- [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
-- Convenient API
+- [Squash](https://github.com/Data-Oriented-House/Squash/) compresses overhead plum data
+- Easy API
 
 <h2>Install</h2>
 
