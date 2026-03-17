@@ -71,7 +71,7 @@ end
 
 replica:Subscribe(player)
 ```
-```
+```lua
 -- Plum
 local plum = Plums.new("Plum", {
   Value = 0
@@ -91,7 +91,7 @@ Replica.OnNew("Player", function(playerReplica)
   playerReplica:OnSet({"Coins"}, updateCoinsText)
 end)
 ```
-```
+```lua
 -- Plum
 Plums:Init()
 
