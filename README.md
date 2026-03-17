@@ -78,7 +78,7 @@ Replica.OnNew("Replica", function(replica)
     textLabel.Text = newCoins .. " Coins"
   end
   
-  updateCoinsText(replica.Data.Coins) -- Run once on load in
+  updateCoinsText(replica.Data.Coins) -- Run once on load
   replica:OnSet({"Coins"}, updateCoinsText)
 end)
 
@@ -86,9 +86,11 @@ end)
 
 Plums:Init()
 Plums.PlumReceived("Plum"):Observe(function(plum)
-  plum.ValueChanged({"Coins"}):Observe(function(newCoins) -- ':Observe()' runs once on load in automatically
+  local function updateCoinsText(newCoins)
     textLabel.Text = newCoins .. " Coins"
-  end)
+  end
+
+  plum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
 end)
 ```
 <h3>Speed</h3>
