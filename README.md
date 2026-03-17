@@ -55,6 +55,34 @@ end)
 
 <h2>Comparing With Replica</h2>
 loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
+
+<h3>Boilerplate</h3>
+
+```lua
+local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
+  Value = 0
+}})
+replica:Replicate()
+
+-- becomes
+
+local plum = Plums.new("Plum", {
+  Value = 0
+}):AddAllClients():EnableAutoAddClient()
+```
+
+```lua
+replica.OnNew("Replica", function(replica)
+
+end)
+replica.RequestData()
+
+-- becomes
+
+Plums.PlumReceived("Plum"):Observe(function(plum)
+  
+end)
+```
 <h3>Speed</h3>
 
 Replica resolves a single path in its table modification methods:
