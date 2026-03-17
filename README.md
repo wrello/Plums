@@ -72,7 +72,7 @@ local plum = Plums.new("Plum", {
 ```
 
 ```lua
-replica.OnNew("Replica", function(replica)
+Replica.OnNew("Replica", function(replica)
 
 end)
 replica.RequestData()
