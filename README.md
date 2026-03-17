@@ -117,6 +117,14 @@ Plums.PlumReceived("Player"):Observe(function(playerPlum)
   playerPlum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
 end)
 ```
+<h3>Packet Size</h3>
+
+Results with a small data table:
+
+| Packet Type | Replica Size | Plum Size (compressed with Squash) |
+| --- | --- | --- |
+| Initial object send | 88 bytes | 82 bytes |
+| Method replication | 63 bytes | 62 bytes |
 <h3>Speed</h3>
 
 Replica resolves a single path in its table modification methods:
@@ -133,13 +141,3 @@ Plums performs additional path resolutions for:
 - propagation of value-change events through nested structures
 
 This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
-<h3>Packet Size</h3>
-
-Results with a small data table:
-
-| Packet Type | Replica Size | Plum Size (compressed with Squash) |
-| --- | --- | --- |
-| Initial object send | 88 bytes | 82 bytes |
-| Method replication | 63 bytes | 62 bytes |
-
-
