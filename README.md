@@ -60,6 +60,7 @@ loleris's ReplicaService (now Replica) was the inspiration for this library, her
 
 Creating a plum and replicating it to specific players:
 ```lua
+-- Replica
 local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
   Value = 0
 }})
@@ -70,14 +71,14 @@ end
 
 replica:Subscribe(player)
 
--- becomes
-
+-- Plum
 local plum = Plums.new("Plum", {
   Value = 0
 }):AddClients(player)
 ```
 Listening for a new plum and updating a text label's value:
 ```lua
+-- Replica
 Replica.RequestData()
 
 Replica.OnNew("Player", function(playerReplica)
@@ -89,8 +90,7 @@ Replica.OnNew("Player", function(playerReplica)
   playerReplica:OnSet({"Coins"}, updateCoinsText)
 end)
 
--- becomes
-
+-- Plum
 Plums:Init()
 
 Plums.PlumReceived("Player"):Observe(function(playerPlum)
