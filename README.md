@@ -77,6 +77,20 @@ local plum = Plums.new("Plum", {
   Value = 0
 }):AddClients(player)
 ```
+Creating a plum and replicating it to all players:
+```lua
+-- Replica
+local replica = Replica.new({Token = Replica.Token("Replica"), Data = {
+  Value = 0
+}})
+replica:Replicate()
+```
+```lua
+-- Plum
+local plum = Plums.new("Plum", {
+  Value = 0
+}):AddAllClients():EnableAutoAddClients()
+```
 Listening for a new plum and updating a text label's value:
 ```lua
 -- Replica
