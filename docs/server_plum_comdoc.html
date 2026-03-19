@@ -25,7 +25,7 @@ body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto
 </head>
 <body>
 <script src="./comdoc_tabs.js"></script>
-<div class="comdoc-container"><div style="font-size: 11px; opacity: 0.5; font-style: italic; margin-bottom: 10px;">Last updated: Mar 16, 2026</div><pre class="comdoc-body">
+<div class="comdoc-container"><div style="font-size: 11px; opacity: 0.5; font-style: italic; margin-bottom: 10px;">Last updated: Mar 18, 2026</div><pre class="comdoc-body">
 	<span style="font-weight: bold;">[ Properties ]</span>
 	
 		.Data : {}
@@ -75,26 +75,19 @@ body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto
 	
 			Number-based ':SetValue()' wrappers:
 	
-				:IncValue(path : {string | number}, increment : number?) -&gt; any?
+				:IncValue(path : {string | number}, increment : number?) -&gt; number
 				
-					Increments the old value at 'path' by 1 and returns the old value.
+					Increments the old value at 'path' by 'increment' (1 by default) and returns the old value.
 					
 					':IncValueServerOnly()' doesn't replicate to clients.
 				
 				
-				:DecValue(path : {string | number}, decrement : number?) -&gt; any?
+				:DecValue(path : {string | number}, decrement : number?) -&gt; number
 				
-					Decrements the old value at 'path' by 1 and returns the old value.
+					Decrements the old value at 'path' by 'increment' (1 by default) and returns the old value.
 					
 					':DecValueServerOnly()' doesn't replicate to clients.
 				
-				
-				:MultiplyValue(path : {string | number}, multiplier : number?) -&gt; any?
-			
-					Multiplies the old value at 'path' by 'multiplier' and returns the old value.
-					
-					':MultiplyValueServerOnly()' doesn't replicate to clients.
-	
 	
 		:ArrayInsert(path : {string | number}, newValue : any?, index : integer?)
 			
@@ -125,12 +118,12 @@ body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto
 			Adds all in-game players to the 'plum.Clients' array.
 			
 			
-		:EnableAutoAddClients() -&gt; self
+		:EnableAutoAddClient() -&gt; self
 		
 			Starts adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
 		
 		
-		:DisableAutoAddClients()
+		:DisableAutoAddClient()
 		
 			Stops adding clients to the 'plum.Clients' array whenever the 'Players.PlayerAdded' event fires.
 		
@@ -159,11 +152,6 @@ body { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto
 		
 			Destroys the plum when 'instance' is destroyed.
 	
-		
-		:WaitFor(path : {string | number}) -&gt; any?
-		
-			Yields until the value at 'path' is not nil and returns the value.
-			
 	
 		:Destroy()
 		
