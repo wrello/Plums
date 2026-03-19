@@ -131,8 +131,6 @@ Packet sizes of initial replication of each object:
     </a>)
   </summary>
 
-Data serialization is possible thanks to [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32), [Squash](https://github.com/Data-Oriented-House/Squash/) (for overhead Plum data), and [PacketSizeCounter](https://github.com/Pyseph/RemotePacketSizeCounter) (to determine if auto-serialization is advantageous for a given table).
-  
 ```lua
 local data = {
   Tycoon = {
@@ -231,6 +229,8 @@ local data = {
 }
 ```
 </details>
+
+Data serialization is possible thanks to [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32), [Squash](https://github.com/Data-Oriented-House/Squash/) (for overhead Plum data), and [PacketSizeCounter](https://github.com/Pyseph/RemotePacketSizeCounter) (to determine if auto-serialization is advantageous for a given table).
 
 <h3>Speed</h3>
 
