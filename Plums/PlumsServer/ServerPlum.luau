@@ -262,6 +262,8 @@ local t = require(script.Parent.Parent.Util.t)
 local ClientReady = require(script.Parent.Parent.Util.ClientReady)
 local SquashCodec = require(script.Parent.Parent.Util.SquashCodec)
 local PlumInternal = require(script.Parent.Parent.Util.PlumInternal)
+local BufferEncoder = require(script.Parent.Parent.Util.BufferEncoder)
+local PacketSizeCounter = require(script.Parent.Parent.Util.PacketSizeCounter)
 
 local IS_STUDIO = RunService:IsStudio()
 
@@ -362,6 +364,23 @@ local function forEachSubPlumShallowest(t, callback, visited)
 	end
 end
 
+-- Compresses t with BufferEncoder only if it reduces t's size
+local function bufferEncode(t)
+	local buf, refs = BufferEncoder.write(t, nil, {
+		allowreferences = true,
+		allowdeduplication = true
+	})
+
+	local compressedSize = PacketSizeCounter.GetPacketSize({RunContext = "Server", RemoteType = "RemoteEvent", PacketData = {buf, refs}})
+	local rawSize = PacketSizeCounter.GetPacketSize({RunContext = "Server", RemoteType = "RemoteEvent", PacketData = {t}})
+
+	if rawSize < compressedSize then
+		return t
+	else
+		return buf, refs
+	end
+end
+
 local ServerPlum = PlumInternal
 
 -------------
@@ -438,8 +457,12 @@ function ServerPlum:_addClients(clients)
 					local cursor = SQ_CURSOR()
 					SQ_U32_SER(cursor, self.Id)
 					SQ_STR_SER(cursor, self.ClassName)
-
-					plumReceivedRE:FireClient(client, SQ_TO_BUFF(cursor), self.Clients, compressSubPlumsShallowest(self.Data))
+					
+					if self.AutoSerializeEnabled then
+						plumReceivedRE:FireClient(client, SQ_TO_BUFF(cursor), self.Clients, bufferEncode(compressSubPlumsShallowest(self.Data)))
+					else
+						plumReceivedRE:FireClient(client, SQ_TO_BUFF(cursor), self.Clients, compressSubPlumsShallowest(self.Data))
+					end
 				end
 			end, warn)
 		end
@@ -476,7 +499,18 @@ function ServerPlum:_addClients(clients)
 end
 
 function ServerPlum:_replicateTo(client, methodName, ...)
-	plumMethodCallRE:FireClient(client, SquashCodec[methodName:gsub("Bubble", "")].Serialize(methodName, self.Id, ...))
+	local args = {...}
+	
+	if self.AutoSerializeEnabled
+		and methodName == "SetValue" or methodName == "ArrayInsert"
+	then
+		local newValue = args[2]
+		if type(newValue) == "table" then
+			args[2], args[3] = bufferEncode(newValue)
+		end
+	end
+	
+	plumMethodCallRE:FireClient(client, SquashCodec[methodName:gsub("Bubble", "")].Serialize(methodName, self.Id, args))
 end
 
 function ServerPlum:_replicate(methodName, ...)

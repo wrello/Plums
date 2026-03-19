@@ -18,7 +18,7 @@ type PathArrayType = {string | number}
 -- Plums modules
 type PlumsSharedType = {
 	-- Methods
-	Init: (self: PlumsClientType | PlumsServerType) -> (),
+	Init: (self: PlumsClientType | PlumsServerType, initSettings: { AutoSerializeEnabled: boolean }?) -> (),
 	AwaitInitialized: (self: PlumsClientType | PlumsServerType) -> (),
 	WaitForPlum: (self: PlumsClientType | PlumsServerType, plumId: number, debugTag: string?) -> PlumsClientType | PlumsServerType;
 }

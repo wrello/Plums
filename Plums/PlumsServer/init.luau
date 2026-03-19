@@ -16,7 +16,9 @@ comdoc "Plums Server" 2 LastUpdated
 	
 	[ Methods ]
 	
-		:Init()
+		:Init(initSettings : {
+			AutoSerializeEnabled : boolean (true by default) -- Will serialize all tables being sent to the client if it reduces packet size (including initial 'plum.Data' table)
+		}?)
 	
 			Initializes the library. Must do once on client + server before anything else.
 	
@@ -59,6 +61,7 @@ local Await = require(script.Parent.Util.Await)
 local t = require(script.Parent.Util.t)
 local Squash = require(script.Parent.Util.Squash)
 local Plum = require(script.ServerPlum)
+local PlumInternal = require(script.Parent.Util.PlumInternal)
 
 local initializedSignal = Signal.new()
 local plumClass_to_createdSignal = {}
@@ -100,7 +103,11 @@ end
 -------------
 -- Methods --
 -------------
-function PlumsServer:Init()
+function PlumsServer:Init(initSettings)
+	if initSettings and initSettings.AutoSerializeEnabled == false then
+		PlumInternal.AutoSerializeEnabled = false
+	end
+	
 	if initialized then
 		return
 	end

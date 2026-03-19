@@ -9,6 +9,8 @@ local EMPTY_FN = function() end
 local PlumInternal = {}
 PlumInternal.__index = PlumInternal
 
+PlumInternal.AutoSerializeEnabled = true
+
 function PlumInternal:_updateBubbleEventsTo(plum)
 	local paths = PathUtil.getPathsTo(plum.Data, self)
 	if #paths > 0 then

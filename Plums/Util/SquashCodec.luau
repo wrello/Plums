@@ -1,4 +1,5 @@
 local Squash = require(script.Parent.Squash)
+local BufferEncoder = require(script.Parent.BufferEncoder)
 
 -- Ser
 local SQ_CURSOR = Squash.cursor
@@ -14,8 +15,7 @@ local SQ_STR_ARR_DES = Squash.array(Squash.string()).des
 local SQ_U32_DES = Squash.uint(4).des
 
 local arrayMethods = {
-	Serialize = function(methodName, plumId, ...)
-		local args = {...}
+	Serialize = function(methodName, plumId, args)
 		local pathString, index = table.remove(args, 1), table.remove(args, 1)
 		
 		local cursor = SQ_CURSOR()
@@ -34,11 +34,11 @@ local arrayMethods = {
 }
 
 local methodNameAndPlumId = {
-	Serialize = function(methodName, plumId, ...)
+	Serialize = function(methodName, plumId, args)
 		local cursor = SQ_CURSOR()
 		SQ_U32_SER(cursor, plumId)
 		SQ_STR_SER(cursor, methodName)
-		return SQ_TO_BUF(cursor), ...
+		return SQ_TO_BUF(cursor), unpack(args)
 	end,
 	-- Don't need a deserialize for this because the client does it manually in order to extract the method name to use in the first place
 }
@@ -47,8 +47,7 @@ return {
 	["ArrayInsert"] = arrayMethods,
 	["ArrayRemove"] = arrayMethods,
 	["SetValue"] = {
-		Serialize = function(methodName, plumId, ...)
-			local args = {...}
+		Serialize = function(methodName, plumId, args)
 			local pathString = table.remove(args, 1)
 			
 			local cursor = SQ_CURSOR()

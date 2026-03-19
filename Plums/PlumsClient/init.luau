@@ -53,6 +53,7 @@ local Await = require(script.Parent.Util.Await)
 local t = require(script.Parent.Util.t)
 local SquashCodec = require(script.Parent.Util.SquashCodec)
 local ClientReady = require(script.Parent.Util.ClientReady)
+local BufferEncoder = require(script.Parent.Parent.Util.BufferEncoder)
 
 local player = Players.LocalPlayer
 
@@ -196,11 +197,18 @@ function PlumsClient:Init()
 				end
 			end
 		elseif methodName == "SetValue" or methodName == "ArrayInsert" or methodName == "ArrayRemove" then
-			local newValue = ...
+			local newValue, refList = ...
 			local pathString, index = SquashCodec[methodName].Deserialize(cursor)
 			local pathArray = PathUtil.toArray(pathString) -- Convert pathString to pathArray for performance
 
 			if newValue then
+				if refList then
+					newValue = BufferEncoder.read(newValue, nil, {  
+						references = refList,
+						allowdeduplication = true
+					})
+				end
+				
 				local subPlumId = getPlumIdFromBuf(newValue)
 				if subPlumId then
 					newValue = self:WaitForPlum(subPlumId)
@@ -230,11 +238,16 @@ function PlumsClient:Init()
 		end
 	end
 
-	local function onPlumReceived(buf, plumClients, plumData)
-		local cursor = SQ_FROM_BUFF(buf)
+	local function onPlumReceived(overheadBuf, plumClients, plumData, refList)
+		local cursor = SQ_FROM_BUFF(overheadBuf)
 		local plumClassName = SQ_STR_DES(cursor)
 		local plumId = SQ_U32_DES(cursor)
 
+		local plumData = refList and BufferEncoder.read(plumData, nil, {  
+			references = refList,
+			allowdeduplication = true
+		}) or plumData
+		
 		local plum = Plum.new(plumId, plumClassName, plumData, plumClients)
 
 		processNewSubPlums(plum, plumData)
