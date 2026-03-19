@@ -119,13 +119,13 @@ end)
 ```
 <h3>Packet Size</h3>
 
-Packet sizes of initial replication of each object:
+Packet sizes of initial replication of each object using the data table below:
 - Replica: 1949 bytes (no serialization)
 - Plum: **1024 bytes** (auto-serialization using BufferEncoder)
 
 <details>
   <summary>
-    Data table used (real player data from 
+    Data (real player data from 
     <a href="https://www.roblox.com/games/17618988439/Pro-Junk-Hauler">
       Pro Junk Hauler
     </a>)
