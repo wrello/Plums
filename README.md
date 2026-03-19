@@ -8,7 +8,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 - Compresses tables to reduce packet size using [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32)
 - Sub-plums allowed in data tables
 - Server-side plum events
-- `Event:Observe()` to collect prior values
+- `Event:Observe()` pattern to collect prior values
 
 <h2>Install</h2>
 
