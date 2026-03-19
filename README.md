@@ -5,11 +5,10 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
-- Supports nested plums
-- Includes server-side plum events
-- Propagates value changed events from sub-tables
-- Supports `Event:Observe()` to collect prior values
-- Uses [Squash](https://github.com/Data-Oriented-House/Squash/) to compress overhead plum data
+- Sub-plums allowed in data tables
+- Server-side plum events
+- `Event:Observe()` to collect prior values
+- [Squash](https://github.com/Data-Oriented-House/Squash/) compresses overhead plum data
 
 <h2>Install</h2>
 
@@ -36,7 +35,7 @@ Then create a plum:
 -- Server
 local playerPlum = Plums.new("Player", {
   Coins = 0
-}):AddAllClients():EnableAutoAddClient()
+}):AddClient(player)
 
 playerPlum:SetValue({"Coins"}, 5)
 ```
@@ -54,7 +53,70 @@ end)
 ```
 
 <h2>Comparing With Replica</h2>
-loleris's ReplicaService (now Replica) was the inspiration for this library, here are some comparisons with Replica...
+
+loleris's ReplicaService (now [Replica](https://github.com/MadStudioRoblox/Replica)) was the inspiration for this library. The following are some comparisons with Replica.
+
+<h3>Boilerplate</h3>
+
+Creating a plum and replicating it to specific players:
+```lua
+-- Replica
+local replica = Replica.New({Token = Replica.Token("Replica"), Data = {
+  Value = 0
+}})
+
+while not table.find(replica.ReadyPlayers, player) do
+  replica.NewReadyPlayer:Wait()
+end
+
+replica:Subscribe(player)
+```
+```lua
+-- Plum
+local plum = Plums.new("Plum", {
+  Value = 0
+}):AddClients(player)
+```
+Creating a plum and replicating it to all players:
+```lua
+-- Replica
+local replica = Replica.New({Token = Replica.Token("Replica"), Data = {
+  Value = 0
+}})
+replica:Replicate()
+```
+```lua
+-- Plum
+local plum = Plums.new("Plum", {
+  Value = 0
+}):AddAllClients():EnableAutoAddClient()
+```
+Listening for a new plum and updating a text label's value:
+```lua
+-- Replica
+Replica.RequestData()
+
+Replica.OnNew("Player", function(playerReplica)
+  local function updateCoinsText(newCoins)
+    textLabel.Text = newCoins .. " Coins"
+  end
+  
+  updateCoinsText(playerReplica.Data.Coins) -- Run once on load
+  playerReplica:OnSet({"Coins"}, updateCoinsText)
+end)
+```
+```lua
+-- Plum
+Plums:Init()
+
+Plums.PlumReceived("Player"):Observe(function(playerPlum)
+  local function updateCoinsText(newCoins)
+    textLabel.Text = newCoins .. " Coins"
+  end
+
+  playerPlum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
+end)
+```
 <h3>Speed</h3>
 
 Replica resolves a single path in its table modification methods:
@@ -79,5 +141,3 @@ Results with a small data table:
 | --- | --- | --- |
 | Initial object send | 88 bytes | 82 bytes |
 | Method replication | 63 bytes | 62 bytes |
-
-
