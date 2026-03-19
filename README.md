@@ -5,10 +5,10 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
+- Compresses tables to reduce packet size using [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32)
 - Sub-plums allowed in data tables
 - Server-side plum events
 - `Event:Observe()` to collect prior values
-- [Squash](https://github.com/Data-Oriented-House/Squash/) compresses overhead plum data
 
 <h2>Install</h2>
 
@@ -117,6 +117,121 @@ Plums.PlumReceived("Player"):Observe(function(playerPlum)
   playerPlum.ValueChanged({"Coins"}):Observe(updateCoinsText) -- ':Observe()' runs once on load automatically
 end)
 ```
+<h3>Packet Size</h3>
+
+Data serialization is possible thanks to [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32), [Squash](https://github.com/Data-Oriented-House/Squash/) (for overhead Plum data), and [PacketSizeCounter](https://github.com/Pyseph/RemotePacketSizeCounter) (to determine if auto-serialization is advantageous for a given table).
+
+Packet sizes of initial replication of each object:
+- Replica: 1949 bytes (no serialization)
+- Plum: **1024 bytes** (auto-serialization using BufferEncoder)
+
+<details>
+  <summary>
+    Data table used (real player data from 
+    <a href="https://www.roblox.com/games/17618988439/Pro-Junk-Hauler">
+      Pro Junk Hauler
+    </a>)
+  </summary>
+  
+```lua
+local data = {
+  Tycoon = {
+    BuiltItems = {
+      "Parking Cover",
+      "VehicleSpawner - Wagon",
+      "Gloves Seller",
+      "Hammer Seller",
+      "Worker Bunker",
+      "Bunker Lights",
+      "Worker - 1",
+      "VehicleSpawner - Bike",
+      "Asphalt",
+      "Grass"
+    },
+    SignText = "",
+    PurchasedItemInfo = {
+      Grass = { BuildProgress = 20, MaxBuildProgress = 20 },
+      ["Parking Cover"] = { BuildProgress = 5, MaxBuildProgress = 5 },
+      ["Worker - 1"] = { BuildProgress = 15, MaxBuildProgress = 15 },
+      ["Bunker Lights"] = { BuildProgress = 15, MaxBuildProgress = 15 },
+      ["Worker - 2"] = { BuildProgress = 4, MaxBuildProgress = 25 },
+      ["Hammer Seller"] = { BuildProgress = 10, MaxBuildProgress = 10 },
+      ["VehicleSpawner - Bike"] = { BuildProgress = 15, MaxBuildProgress = 15 },
+      ["Worker Bunker"] = { BuildProgress = 10, MaxBuildProgress = 10 },
+      ["Gloves Seller"] = { BuildProgress = 5, MaxBuildProgress = 5 },
+      Asphalt = { BuildProgress = 20, MaxBuildProgress = 20 },
+      ["VehicleSpawner - Wagon"] = { BuildProgress = 5, MaxBuildProgress = 5 }
+    },
+    PurchasedItems = {
+      "Parking Cover",
+      "VehicleSpawner - Wagon",
+      "Gloves Seller",
+      "Hammer Seller",
+      "Worker Bunker",
+      "Bunker Lights",
+      "Worker - 1",
+      "VehicleSpawner - Bike",
+      "Asphalt",
+      "Grass",
+      "Worker - 2"
+    },
+    PurchasedWorkers = {
+      Worker_1 = {
+        SleepTime = 30
+      }
+    }
+  },
+  EnabledGamePasses = {},
+  JunkSoldCount = 23,
+  NumSold = {
+    Sofa = 0,
+    Tank = 0,
+    ["Big Trash"] = 0,
+    AWP = 0,
+    Piano = 0,
+    Matress = 0,
+    Fridge = 0,
+    Safe = 0,
+    Boots = 7,
+    Papers = 13,
+    ["Gaming PC"] = 0,
+    Plant = 3,
+    ["Dead Body"] = 0,
+    Motorcycle = 0,
+    Boat = 0,
+    Toilet = 0,
+    Sarcophagus = 0,
+    ["Grandfather Clock"] = 0
+  },
+  EquippedBadges = {},
+  OwnedBadges = {},
+  Money = 500,
+  UnlockedTitles = {},
+  EquippedGloves = "Common",
+  CompletedTutorial = true,
+  Storage = {
+    Tycoon = {
+      BuiltItems = {},
+      PurchasedItems = {},
+      PurchasedItemInfo = {}
+    }
+  },
+  Settings = {
+    ["Background Music"] = {
+      On = true
+    }
+  },
+  Notifs = {
+    NewTitle = 0
+  },
+  EquippedHammer = "WoodHammer",
+  SentNotifications = {},
+  Scraps = 2,
+  ClosedUpdateLog = "Update 3!"
+}
+```
+</details>
+
 <h3>Speed</h3>
 
 Replica resolves a single path in its table modification methods:
@@ -133,11 +248,3 @@ Plums performs additional path resolutions for:
 - propagation of value-change events through nested structures
 
 This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
-<h3>Packet Size</h3>
-
-Results with a small data table:
-
-| Packet Type | Replica Size | Plum Size (compressed with Squash) |
-| --- | --- | --- |
-| Initial object send | 88 bytes | 82 bytes |
-| Method replication | 63 bytes | 62 bytes |
