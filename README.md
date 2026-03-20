@@ -6,15 +6,15 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
 - Compresses tables to reduce packet size using [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32)
-- Sub-plums allowed in data tables
+- Nested plums allowed in data tables
 - Server-side plum events
-- `Event:Observe()` to collect prior values
+- `Event:Observe()` pattern to collect prior values
 
 <h2>Install</h2>
 
 - Roblox model: https://create.roblox.com/store/asset/112997442485158
-- Wally: `Plums = "wrello/plums@0.1.0"`
-- Pesde: `Plums = { name = "wrello/plums", version = "^0.1.0" }`
+- Wally: `Plums = "wrello/plums@0.2.0"`
+- Pesde: `Plums = { name = "wrello/plums", version = "^0.2.0" }`
 
 <h2>Quick Start</h2>
 
@@ -54,7 +54,7 @@ end)
 
 <h2>Comparing With Replica</h2>
 
-loleris's ReplicaService (now [Replica](https://github.com/MadStudioRoblox/Replica)) was the inspiration for this library. The following are some comparisons with Replica.
+loleris's ReplicaService (now [Replica](https://github.com/MadStudioRoblox/Replica)) was the inspiration for this library. The following are some comparisons with Replica:
 
 <h3>Boilerplate</h3>
 
@@ -119,20 +119,18 @@ end)
 ```
 <h3>Packet Size</h3>
 
-Data serialization is possible thanks to [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32), [Squash](https://github.com/Data-Oriented-House/Squash/) (for overhead Plum data), and [PacketSizeCounter](https://github.com/Pyseph/RemotePacketSizeCounter) (to determine if auto-serialization is advantageous for a given table).
-
-Packet sizes of initial replication of each object:
+Packet sizes of initial replication of each object using the data table below:
 - Replica: 1949 bytes (no serialization)
 - Plum: **1024 bytes** (auto-serialization using BufferEncoder)
 
 <details>
   <summary>
-    Data table used (real player data from 
+    Data (real player data from 
     <a href="https://www.roblox.com/games/17618988439/Pro-Junk-Hauler">
       Pro Junk Hauler
     </a>)
   </summary>
-  
+
 ```lua
 local data = {
   Tycoon = {
@@ -231,6 +229,8 @@ local data = {
 }
 ```
 </details>
+
+*Data serialization is possible thanks to [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32), [Squash](https://github.com/Data-Oriented-House/Squash/) (for overhead plum data), and [PacketSizeCounter](https://github.com/Pyseph/RemotePacketSizeCounter) (to determine if auto-serialization is advantageous for a given table).*
 
 <h3>Speed</h3>
 
