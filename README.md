@@ -13,8 +13,8 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 <h2>Install</h2>
 
 - Roblox model: https://create.roblox.com/store/asset/112997442485158
-- Wally: `Plums = "wrello/plums@0.2.0"`
-- Pesde: `Plums = { name = "wrello/plums", version = "^0.2.0" }`
+- Wally: `Plums = "wrello/plums@0.2.1"`
+- Pesde: `Plums = { name = "wrello/plums", version = "^0.2.1" }`
 
 <h2>Quick Start</h2>
 
