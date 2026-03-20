@@ -1,7 +1,7 @@
 --[[
 comdoc "Client Plum" 3 LastUpdated
 
-	[ Properties ]
+	[ Properties (readonly) ]
 	
 		.Data : {}
 		

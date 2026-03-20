@@ -1,7 +1,7 @@
 --[[
 comdoc "Server Plum" 4 LastUpdated
 
-	[ Properties ]
+	[ Properties (readonly) ]
 	
 		.Data : {}
 		
@@ -59,7 +59,7 @@ comdoc "Server Plum" 4 LastUpdated
 				
 				:DecValue(path : {string | number}, decrement : number?) -> number
 				
-					Decrements the old value at 'path' by 'increment' (1 by default) and returns the old value.
+					Decrements the old value at 'path' by 'decrement' (1 by default) and returns the old value.
 					
 					':DecValueServerOnly()' doesn't replicate to clients.
 				
