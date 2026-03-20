@@ -145,7 +145,7 @@ local PathUtil = require(script.Parent.Parent.Util.PathUtil)
 local Signal = require(script.Parent.Parent.Util.Signal)
 local Squash = require(script.Parent.Parent.Util.Squash)
 local t = require(script.Parent.Parent.Util.t)
-local Maid = require(game.ReplicatedStorage.Util.Maid)
+local Maid = require(script.Parent.Parent.Util.Maid)
 local PlumInternal = require(script.Parent.Parent.Util.PlumInternal)
 
 local invokeFromClientRF = script.Parent.Parent.InvokeFromClientRF

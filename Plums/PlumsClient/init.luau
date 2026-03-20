@@ -53,7 +53,7 @@ local Await = require(script.Parent.Util.Await)
 local t = require(script.Parent.Util.t)
 local SquashCodec = require(script.Parent.Util.SquashCodec)
 local ClientReady = require(script.Parent.Util.ClientReady)
-local BufferEncoder = require(script.Parent.Parent.Util.BufferEncoder)
+local BufferEncoder = require(script.Parent.Util.BufferEncoder)
 
 local player = Players.LocalPlayer
 
