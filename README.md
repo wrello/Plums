@@ -12,7 +12,7 @@ I made Plums because ReplicaService was no longer being maintained and was missi
 - nested replicated objects in data tables
 - serialized data to decrease packet size
 - internal handling of non-ready clients on replication
-- propogated ValueChanged events to nested listeners 
+- recursive propogation of ValueChanged events from table diffs
   - e.g. if we `listen(path.to.value)` then `set(path.to, {value = 1})` should fire the listener
 
 ###### You also get to name your replicated objects "somethingPlum" which is not only fun, but helps distinguish them from other Replica... nomenclature.
