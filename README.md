@@ -14,7 +14,7 @@ I made Plums because ReplicaService was no longer being maintained and was missi
 - serialized data to decrease packet size
 - propogated ValueChanged events to nested listeners
 
-###### You also get to call your replicated objects "somethingPlum" which is not only fun, but helps distinguish them from other Replica... phrases.
+###### You also get to name your replicated objects "somethingPlum" which is not only fun, but helps distinguish them from other Replica... phrases.
 
 <h2>Install</h2>
 
