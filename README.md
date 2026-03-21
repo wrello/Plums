@@ -54,11 +54,12 @@ end)
 
 <h2>Comparing With Replica</h2>
 
-I made Plums because ReplicaService had some problems. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which took care of these issues, but I never stopped working on my version. Plums prioritizes dev experience with a simpler API and adds some things that Replica is missing, namely:
+I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is better developed, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes dev experience with a simpler API and adds some things that Replica is missing, namely:
 - server-side events
 - nested replicated objects in data tables
 - internal handling of non-registered clients on replication
 - serialized data to decrease packet sizes
+- recursive value changed events from nested listeners
 
 Here are some comparisons between the two:
 
