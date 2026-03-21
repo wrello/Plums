@@ -7,18 +7,20 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Why Plums Exists</h2>
 
-I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes developer experience with a simpler API and adds some things that Replica is missing, namely:
+I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris has since released [Replica](https://github.com/MadStudioRoblox/Replica) which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums offers a Replica-like API with some additional features:
 - server-side events
 - nested replicated objects in data tables
 - internal handling of non-registered clients on replication
-- serialized data to decrease packet sizes
-- propogated value changed events to nested listeners
+- serialized data to decrease packet size
+- propogated ValueChanged events to nested listeners
+
+###### You also get to call your replicated objects "somethingPlum" which is just awesome.
 
 <h2>Install</h2>
 
-- Roblox model: https://create.roblox.com/store/asset/112997442485158
-- Wally: `Plums = "wrello/plums@0.2.1"`
-- Pesde: `Plums = { name = "wrello/plums", version = "^0.2.1" }`
+Roblox model: https://create.roblox.com/store/asset/112997442485158 <br>
+Wally: `Plums = "wrello/plums@0.2.1"` <br>
+Pesde: `Plums = { name = "wrello/plums", version = "^0.2.1" }`
 
 <h2>Quick Start</h2>
 
