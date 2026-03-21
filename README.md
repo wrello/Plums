@@ -15,7 +15,7 @@ I made Plums because ReplicaService was no longer being maintained and was missi
 - propogated ValueChanged events to nested listeners 
   - e.g. if we `listen(path.to.value)` then `set(path.to, {value = 1})` should fire the listener
 
-###### You also get to name your replicated objects "somethingPlum" which is not only fun, but helps distinguish them from other Replica... terminology.
+###### You also get to name your replicated objects "somethingPlum" which is not only fun, but helps distinguish them from other Replica... nomenclature.
 
 <h2>Install</h2>
 
