@@ -11,7 +11,7 @@ I made Plums because ReplicaService was no longer being maintained and was missi
 - server-side events
 - nested replicated objects in data tables
 - serialized data to decrease packet size
-- internal handling of non-registered clients on replication
+- internal handling of non-ready clients on replication
 - propogated ValueChanged events to nested listeners 
   - e.g. if we `listen(path.to.value)` then `set(path.to, {value = 1})` should fire the listener
 
