@@ -126,7 +126,7 @@ end)
 
 Packet sizes of initial replication of each object using the data table below:
 - Replica: 1949 bytes (no serialization)
-- Plum: **1024 bytes** (auto-serialization using BufferEncoder)
+- Plum: **1024 bytes** (dynamic serialization using BufferEncoder)
 
 <details>
   <summary>
