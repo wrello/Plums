@@ -5,12 +5,14 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
-I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is better developed, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes dev experience with a simpler API and adds some things that Replica is missing, namely:
+<h2>Why Plums Exists</h2>
+
+I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes developer experience with a simpler API and adds some things that Replica is missing, namely:
 - server-side events
 - nested replicated objects in data tables
 - internal handling of non-registered clients on replication
 - serialized data to decrease packet sizes
-- propogated value changed events from nested listeners
+- propogated value changed events to nested listeners
 
 <h2>Install</h2>
 
@@ -242,4 +244,4 @@ for i = 1, #path - 1 do
 end
 pointer[path[#path]] = value
 ```
-Plums does this and also fires server-side events for all ancestor/descendant plums listening for changes at that path. There is also a significant amount of recursion necessary for propogating ValueChanged events for nested listeners on each plum. This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
+Plums does this and also fires server-side events for all ancestor/descendant plums listening for changes at that path. There is also a significant amount of recursion necessary for propogating ValueChanged events to nested listeners on each plum. This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
