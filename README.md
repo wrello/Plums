@@ -10,7 +10,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris has since released [Replica](https://github.com/MadStudioRoblox/Replica) which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums offers a Replica-like API with some additional features:
 - server-side events
 - nested replicated objects in the `Data` table
-- auto-serialized tables to decrease packet size
+- serialized tables to decrease packet size
 - internal handling of non-ready clients on replication
 - recursive propogation of ValueChanged events from table diffs
   - e.g. if we `listen(path.to.value)` then `set(path.to, {value = 1})` should fire the listener
