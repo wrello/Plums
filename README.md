@@ -247,4 +247,4 @@ for i = 1, #path - 1 do
 end
 pointer[path[#path]] = value
 ```
-Plums does this and also fires server-side events for all ancestor/descendant plums listening for changes at that path. There is also a significant amount of recursion necessary for propogating ValueChanged events to nested listeners on each plum. This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
+Plums does this and also fires server-side events for all ancestor/descendant plums listening for changes at that path. There is also a significant amount of recursion necessary for propogating ValueChanged events from table diffs to each plum. This can cause table modification methods to be up to `~10×` slower depending on how complex the plum is. **This speed tradeoff should not be noticable in practice** (e.g. `10,000` table modification calls on a deeply nested plum with lots of event listeners takes `0.05` seconds).
