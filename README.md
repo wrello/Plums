@@ -5,10 +5,12 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 ⚠️Currently in beta. Not recommended for use in production.⚠️
 
-- Compresses tables to reduce packet size using [BufferEncoder](https://devforum.roblox.com/t/bufferencoder-very-efficient-table-to-buffer-serializer-that-doesn%E2%80%99t-use-schemas/3584699/32)
-- Nested plums allowed in data tables
-- Server-side plum events
-- `Event:Observe()` pattern to collect prior values
+I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is better developed, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes dev experience with a simpler API and adds some things that Replica is missing, namely:
+- server-side events
+- nested replicated objects in data tables
+- internal handling of non-registered clients on replication
+- serialized data to decrease packet sizes
+- propogated value changed events from nested listeners
 
 <h2>Install</h2>
 
@@ -53,15 +55,6 @@ end)
 ```
 
 <h2>Comparing With Replica</h2>
-
-I made Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored client-side ones. loleris released [Replica](https://github.com/MadStudioRoblox/Replica) which is better developed, but I never stopped working on my ReplicaService-inspired version. Plums prioritizes dev experience with a simpler API and adds some things that Replica is missing, namely:
-- server-side events
-- nested replicated objects in data tables
-- internal handling of non-registered clients on replication
-- serialized data to decrease packet sizes
-- recursive value changed events from nested listeners
-
-Here are some comparisons between the two:
 
 <h3>Boilerplate</h3>
 
