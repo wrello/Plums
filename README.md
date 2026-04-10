@@ -7,7 +7,7 @@ API: [wrello.github.io/Plums/](https://wrello.github.io/Plums/)
 
 <h2>Why Plums Exists</h2>
 
-I started developing Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris has since released [Replica](https://github.com/MadStudioRoblox/Replica) which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums offers a Replica-like API with some additional features:
+I started developing Plums because ReplicaService was no longer being maintained and was missing built-in server-side events that mirrored the client-side ones. loleris has since released [Replica](https://github.com/MadStudioRoblox/Replica), which is greatly improved, but I never stopped working on my ReplicaService-inspired version. Plums offers a Replica-like API with some additional features:
 - server-side events
 - nested replicated objects in the `Data` table
 - serialized tables to decrease packet size
